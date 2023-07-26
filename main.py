@@ -2,13 +2,14 @@ import g4f
 import flask
 import requests
 import datetime
+import os
 
 app = flask.Flask(__name__)
 
 # Define system messages for each mode
 system_messages = {
-    "cat": "act like a cat that only meows",
-    "dog": "act like a dog that only barks"
+    "normal": "act like a normal chatbot that is cool and responds with emojis",
+    "clone": os.getenv('promptclone')
 }
 
 # Define rate limit function
