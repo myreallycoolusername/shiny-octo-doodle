@@ -73,7 +73,7 @@ def api():
         # Pass list of messages to g4f.ChatCompletion.create method with model as 'gpt-4' and provider as g4f.Provider.GetGpt
         response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.ChatgptAi, messages=messages)
         # Return response as json object with 200 status code
-        return flask.jsonify(response), 200
+        return flask.make_response(response), 200
 
 # Run app on 0.0.0.0 with port 3000 
 if __name__ == "__main__":
