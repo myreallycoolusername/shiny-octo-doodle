@@ -49,7 +49,7 @@ def check_rate_limit(id):
         return False
 
 # Define route for api url
-@app.route("/")
+@app.route("/api")
 def api():
     # Get query, id, mode and internet from url parameters
     query = flask.request.args.get("msg")
