@@ -129,7 +129,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             # Pass list of messages to g4f.ChatCompletion.create method with model as 'gpt-4' and provider as g4f.Provider.GetGpt
-            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.ChatgptAi, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.ChatgptAi, messages=messages)
             # Return response as json object with 200 status code
             return flask.make_response(response), 200
 
