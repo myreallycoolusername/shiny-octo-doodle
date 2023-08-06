@@ -3,8 +3,6 @@ import flask
 import requests
 import datetime
 import os
-# Import request module to access request object 
-import request
 
 app = flask.Flask(__name__)
 
@@ -66,10 +64,23 @@ def api():
         # Return message with 200 status code saying rate limit exceeded
         return flask.jsonify({"message": "You have exceeded the rate limit. Please try again later."}), 200
     else:
-        # Check if args dictionary is empty or not using len function 
-        if len(args) == 0:
-            # Return message with 200 status code saying that user needs to use the API correctly and provide an example of a valid URL with parameters 
-            return flask.jsonify({"message": "You need to use the API correctly. Please provide valid parameters in the URL. For example: example.com/?msg=hello&id=123&mode=normal&internet=on"}), 200 
+        # Create an empty list to store error messages 
+        errors = []
+        # For each parameter, check if it is None or an empty string and append an error message to the errors list if so 
+        if not query:
+            errors.append("Query parameter is required.")
+        if not id:
+            errors.append("Id parameter is required.")
+        if not mode:
+            errors.append("Mode parameter is required.")
+        if not internet:
+            errors.append("Internet parameter is required.")
+        # Check if errors list is empty or not using len function 
+        if len(errors) > 0:
+            # Join the errors list with a space as a separator and store it in a variable called error_output 
+            error_output = " ".join(errors)
+            # Return the error_output as a message with 400 status code (Bad Request) using flask.jsonify and flask.make_response functions 
+            return flask.make_response(flask.jsonify({"message": error_output}), 400)
         else:
             # Get system message for mode from dictionary using get method with a default value 
             system_message = system_messages.get(mode, "Invalid mode")
@@ -79,11 +90,9 @@ def api():
             date = now.strftime("%A, %d %B, %Y")
             # Format time as hour, minute and second 
             time = now.strftime("%I:%M:%S %p")
-            # Add date, year and time to system message with commas and spaces as separators 
-            system_message = date + ", " + time + ", " + system_message 
             # Check if internet parameter is set to on
             if internet == "on":
-                # Send a GET request to the DuckDuckGo API endpoint with the query parameter as the query
+                # Send a GET request to the DuckDuckGo API endpoint with the query parameter as the query and limit the results to 5
                 ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
                 # Check if the response status code is OK 
                 if ddg_response.ok:
@@ -102,11 +111,11 @@ def api():
                     formatted_output = " ".join(formatted_data)
                     # Assign the formatted_output to a variable called internet_output 
                     internet_output = formatted_output 
-                    # Assign the date to a variable called current_date
+                     # Assign the date to a variable called current_date
                     current_date = date
                     # Assign the time to a variable called current_time
                     current_time = time
-                    # Add the internet_output to the system_message with a colon and a space as separators
+                    # System message
                     system_message = system_message + ": " + internet_output + "current date: " + current_date + ". current time: " + current_time + "."
                 else:
                     # Print or return the response text to see what the response contains 
