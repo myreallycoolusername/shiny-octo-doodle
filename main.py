@@ -91,10 +91,14 @@ def api():
                 # Join the formatted_data list with a space as a separator and store it in a variable called formatted_output
                 formatted_output = " ".join(formatted_data)
                 # Assign the formatted_output to a variable called internet_output 
-                internet_output = formatted_output 
+                internet_output = formatted_output
+                # Assign the date to a variable called current_date
+                current_date = date
+                # Assign the time to a variable called current_time
+                current_time = time
                 # Add the internet_output to the system_message with a colon and a space as separators
-                system_message = system_message + ": " + internet_output + f". current date: {date}, current time: {time}"
-            else:
+                system_message = system_message + ": " + internet_output + f"current date: {current_date}, current time: {current_time}"
+            else
                 # Print or return the response text to see what the response contains 
                 print(ddg_response.text)
                 # Return a message with 200 status code saying that the web scraping failed 
