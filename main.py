@@ -98,7 +98,7 @@ def api():
                 current_time = time
                 # Add the internet_output to the system_message with a colon and a space as separators
                 system_message = system_message + ": " + internet_output + "current date: " + current_date + ". current time: " + current_time
-            else
+    else:
                 # Print or return the response text to see what the response contains 
                 print(ddg_response.text)
                 # Return a message with 200 status code saying that the web scraping failed 
