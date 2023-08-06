@@ -8,10 +8,10 @@ app = flask.Flask(__name__)
 
 # Define system messages for each mode
 system_messages = {
-    "cat": "act like a cat that only meows, you dont know english so you only meow",
-    "dog": "act like a dog that only barks",
-  "info": os.getenv('info'),
-  "normal": "act like a chatbot"
+    "cat": os.getenv('cat'),
+    "dog": os.getenv('dog'),
+  "info": os.getenv('promptclone'),
+  "normal": os.getenv('normal')
 }
 
 # Define rate limit function
@@ -71,12 +71,10 @@ def api():
         date = now.strftime("%A, %d %B, %Y")
         # Format time as hour, minute and second 
         time = now.strftime("%I:%M:%S %p")
-        # Add date, year and time to system message with commas and spaces as separators 
-        system_message = date + ", " + time + ", " + system_message 
         # Check if internet parameter is set to on
         if internet == "on":
             # Send a GET request to the DuckDuckGo API endpoint with the query parameter as the query and limit the results to 5
-            ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}&limit=5")
+            ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
             # Check if the response status code is OK 
             if ddg_response.ok:
                 # Parse the ddg_response as a JSON object and store it in a variable called ddg_data
@@ -95,7 +93,7 @@ def api():
                 # Assign the formatted_output to a variable called internet_output 
                 internet_output = formatted_output 
                 # Add the internet_output to the system_message with a colon and a space as separators
-                system_message = system_message + ": " + internet_output 
+                system_message = system_message + ": " + internet_output + f". current date: {date}, current time: {time}"
             else:
                 # Print or return the response text to see what the response contains 
                 print(ddg_response.text)
