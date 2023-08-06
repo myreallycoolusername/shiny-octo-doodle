@@ -83,7 +83,7 @@ def api():
             return flask.make_response(flask.jsonify({"message": error_output}), 400)
         else:
             # Get system message for mode from dictionary using get method with a default value 
-            system_message = system_messages.get(mode, "Invalid mode")
+            system_message = system_messages.get(mode, "h")
             # Get current date and time using datetime module 
             now = datetime.datetime.now()
             # Format date as weekday, day, month and year 
