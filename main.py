@@ -3,6 +3,10 @@ import flask
 import requests
 import datetime
 import os
+# Import Flask-Limiter and PyMongo 
+from flask_limiter import Limiter
+from flask_limiter.util import get_remote_address
+from pymongo import MongoClient
 
 app = flask.Flask(__name__)
 
@@ -14,6 +18,19 @@ system_messages = {
   "normal": os.getenv('normal'),
   "devmode": os.getenv('devmode')  
 }
+
+# Create a MongoClient instance and connect to MongoDB database 
+client = MongoClient(os.getenv('mongodb'))
+db = client.database
+
+# Create a Limiter instance and pass it the get_remote_address function and the app instance 
+limiter = Limiter(
+    get_remote_address,
+    app=app,
+    storage_uri=os.getenv('mongodb'),
+    default_limits=["2 per minute", "1 per second"],
+    strategy="fixed-window"
+)
 
 # Define rate limit function
 def check_rate_limit(id):
@@ -51,6 +68,8 @@ def check_rate_limit(id):
 
 # Define route for api url
 @app.route("/")
+# Use limiter.limit decorator to apply rate limits to api function 
+@limiter.limit("10 per hour")
 def api():
     # Get query, id, mode and internet from url parameters using request.args dictionary 
     args = flask.request.args 
