@@ -69,7 +69,7 @@ def check_rate_limit(id):
 # Define route for api url
 @app.route("/")
 # Use limiter.limit decorator to apply rate limits to api function 
-@limiter.limit("10 per hour")
+@limiter.limit("1000 per hour")
 def api():
     # Get query, id, mode and internet from url parameters using request.args dictionary 
     args = flask.request.args 
