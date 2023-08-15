@@ -152,6 +152,28 @@ def api():
             # Return response as json object with 200 status code
             return flask.make_response(response), 200
 
+limiter = Limiter(
+    get_remote_address,  
+    app=app,
+    storage_uri=os.getenv('mongodb'),
+    default_limits=["10 per minute", "1500 per day"],
+    strategy="fixed-window"
+)
+
+@app.route('/generate', methods=['GET'])
+@limiter.limit("10 per minute;1500 per day", key_func=lambda: request.args.get('id'))
+async def generate():
+    id = request.args.get('id')
+    print(f"id: {id}")
+    prompt = request.args.get('prompt')
+    resp = await getattr(freeGPT, "prodia").Generation().create(prompt)
+    img = Image.open(BytesIO(resp))
+    img_io = BytesIO()
+    img.save(img_io, 'PNG')
+    img_io.seek(0)
+    return send_file(img_io, mimetype='image/png')
+
+
 # Run app on port 5000 (default)
 if __name__ == "__main__":
   app.run(host="0.0.0.0", port=3000)
