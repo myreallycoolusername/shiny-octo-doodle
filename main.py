@@ -3,6 +3,7 @@ import freeGPT
 import flask
 from flask import Flask, request, send_file
 import requests
+import asgiref
 import datetime
 import os
 # Import Flask-Limiter and PyMongo 
