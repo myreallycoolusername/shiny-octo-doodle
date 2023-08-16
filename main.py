@@ -1,5 +1,5 @@
 import g4f
-from flask import Flask, request, send_file
+from Flask import request, send_file
 import requests
 import datetime
 import os
