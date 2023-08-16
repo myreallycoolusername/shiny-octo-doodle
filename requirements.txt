@@ -7,4 +7,4 @@ pymongo==4.4.1
 js2py @ git+https://github.com/PiotrDabkowski/js2py.git
 freeGPT @ git+https://github.com/Ruu3f/freeGPT.git
 serverless-wsgi==3.0.2
-Flask[async]
+aioflask==0.4.0
