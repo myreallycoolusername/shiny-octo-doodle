@@ -31,7 +31,7 @@ limiter = Limiter(
     get_remote_address,
     app=app,
     storage_uri=os.getenv('mongodb'),
-    default_limits=["2 per minute", "1 per second"],
+    default_limits=["30 per minute", "1 per second"],
     strategy="fixed-window"
 )
 
@@ -155,13 +155,6 @@ def api():
             # Return response as json object with 200 status code
             return flask.make_response(response), 200
 
-limiter = Limiter(
-    get_remote_address,  
-    app=app,
-    storage_uri=os.getenv('mongodb'),
-    default_limits=["10 per minute", "1500 per day"],
-    strategy="fixed-window"
-)
 
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;1500 per day", key_func=lambda: request.args.get('id'))
