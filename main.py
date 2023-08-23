@@ -104,8 +104,8 @@ def api():
         if len(errors) > 0:
             # Join the errors list with a space as a separator and store it in a variable called error_output 
             error_output = " ".join(errors)
-            # Return the error_output as a message with 400 status code (Bad Request) using flask.jsonify and flask.make_response functions 
-            return flask.make_response(flask.jsonify({"message": error_output}), 400)
+            # Return the error_output as a message with 400 status code (Bad Request) using flask.jsonify and flask.make_response functions (changed) 
+            return flask.make_response(flask.jsonify({"message": error_output}), 200)
         else:
             # Get system message for mode from dictionary using get method with a default value 
             system_message = system_messages.get(mode, "h")
