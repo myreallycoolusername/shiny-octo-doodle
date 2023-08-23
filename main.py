@@ -6,6 +6,7 @@ import requests
 import asgiref
 import datetime
 import os
+from PIL import Image
 # Import Flask-Limiter and PyMongo 
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
