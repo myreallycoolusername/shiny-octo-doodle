@@ -168,8 +168,7 @@ def transcript():
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
     system_message = os.getenv('vid')
-# Get system message for mode from dictionary using get method with a default value 
-            system_message = os.getenv('vid')
+# Get system message for mode from dictionary using get method with a default value
             # Get current date and time using datetime module 
             now = datetime.datetime.now()
             # Format date as weekday, day, month and year 
