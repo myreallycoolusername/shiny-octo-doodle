@@ -7,6 +7,7 @@ import asgiref
 import datetime
 import os
 from PIL import Image
+from youtube_transcript_api import YouTubeTranscriptApi
 # Import Flask-Limiter and PyMongo 
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -108,7 +109,7 @@ def api():
             return flask.make_response(flask.jsonify({"message": error_output}), 200)
         else:
             # Get system message for mode from dictionary using get method with a default value 
-            system_message = system_messages.get(mode, "h")
+            system_message = system_messages.get(mode, "normal")
             # Get current date and time using datetime module 
             now = datetime.datetime.now()
             # Format date as weekday, day, month and year 
@@ -153,10 +154,29 @@ def api():
                 {"role": "user", "content": query}
             ]
             # Pass list of messages to g4f.ChatCompletion.create method with model as 'gpt-4' and provider as g4f.Provider.GetGpt
-            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.Equing, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Liaobots, messages=messages)
             # Return response as json object with 200 status code
             return flask.make_response(response), 200
-
+@app.route('/transcript', methods=['GET'])
+@limiter.limit("10 per minute;1500 per day", key_func=lambda: request.args.get('id'))
+def transcript():
+    videoid = request.args.get('videoid')
+    id = request.args.get('id')
+    query = request.args.get('query')
+    print(f"id: {id} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
+    transcript = YouTubeTranscriptApi.get_transcript(videoid)
+    formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
+# System message
+system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video to summarize: {formatted_transcript}."
+# Create list of messages with the modified system_message as the first element and the user's query as the second element
+            messages = [
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": query}
+            ]
+            # Pass list of messages to g4f.ChatCompletion.create method with model as 'gpt-4' and provider as g4f.Provider.GetGpt
+            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Liaobots, messages=messages)
+            # Return response as json object with 200 status code
+            return flask.make_response(response), 200
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;1500 per day", key_func=lambda: request.args.get('id'))
