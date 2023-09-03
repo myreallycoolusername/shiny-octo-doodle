@@ -168,7 +168,15 @@ def transcript():
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
     system_message = os.getenv('vid')
-# Check if internet parameter is set to on
+# Get system message for mode from dictionary using get method with a default value 
+            system_message = os.getenv('vid')
+            # Get current date and time using datetime module 
+            now = datetime.datetime.now()
+            # Format date as weekday, day, month and year 
+            date = now.strftime("%A, %d %B, %Y")
+            # Format time as hour, minute and second 
+            time = now.strftime("%I:%M:%S %p")
+            # Check if internet parameter is set to on
             if internet == "on":
                 # Send a GET request to the DuckDuckGo API endpoint with the query parameter as the query and limit the results to 5
                 ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
@@ -193,13 +201,13 @@ def transcript():
                     current_date = date
                     # Assign the time to a variable called current_time
                     current_time = time
-                    else:
+                    # System message
+                    system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
+                else:
                     # Print or return the response text to see what the response contains 
                     print(ddg_response.text)
                     # Return a message with 200 status code saying that the web scraping failed 
                     return flask.jsonify({"message": "Web scraping failed. Please try again later."}), 200
-# System meassage
-system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
 # Create list of messages with the modified system_message as the first element and the user's query as the second element
             messages = [
                 {"role": "system", "content": system_message},
