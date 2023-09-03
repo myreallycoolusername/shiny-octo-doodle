@@ -163,11 +163,43 @@ def transcript():
     videoid = request.args.get('videoid')
     id = request.args.get('id')
     query = request.args.get('query')
+    internet = request.args.get('search')
     print(f"id: {id} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
+    system_message = os.getenv('vid')
+# Check if internet parameter is set to on
+            if internet == "on":
+                # Send a GET request to the DuckDuckGo API endpoint with the query parameter as the query and limit the results to 5
+                ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
+                # Check if the response status code is OK 
+                if ddg_response.ok:
+                    # Parse the ddg_response as a JSON object and store it in a variable called ddg_data
+                    ddg_data = ddg_response.json()
+                    # Create an empty list called formatted_data to store the formatted link and snippet strings
+                    formatted_data = []
+                    # Loop through each item in the ddg_data list and extract the link and snippet values
+                    for item in ddg_data:
+                        link = item["link"]
+                        snippet = item["snippet"]
+                        # Use string formatting to create a string that follows the template "link: (the link), snippet: (the snippet)." for each item and append it to the formatted_data list
+                        formatted_string = f"link: {link}, snippet: {snippet}."
+                        formatted_data.append(formatted_string)
+                    # Join the formatted_data list with a space as a separator and store it in a variable called formatted_output
+                    formatted_output = " ".join(formatted_data)
+                    # Assign the formatted_output to a variable called internet_output 
+                    internet_output = formatted_output 
+                     # Assign the date to a variable called current_date
+                    current_date = date
+                    # Assign the time to a variable called current_time
+                    current_time = time
+                    else:
+                    # Print or return the response text to see what the response contains 
+                    print(ddg_response.text)
+                    # Return a message with 200 status code saying that the web scraping failed 
+                    return flask.jsonify({"message": "Web scraping failed. Please try again later."}), 200
 # System message
-system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video to summarize: {formatted_transcript}."
+system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
 # Create list of messages with the modified system_message as the first element and the user's query as the second element
             messages = [
                 {"role": "system", "content": system_message},
