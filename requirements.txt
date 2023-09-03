@@ -10,3 +10,4 @@ serverless-wsgi==3.0.2
 asgiref==3.7.2
 Pillow @ git+https://github.com/python-pillow/Pillow.git
 wheel @ git+https://github.com/pypa/wheel.git
+youtube-transcript-api @ git+https://github.com/jdepoix/youtube-transcript-api.git
