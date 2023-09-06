@@ -168,54 +168,36 @@ def transcript():
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
     system_message = os.getenv('vid')
-# Get system message for mode from dictionary using get method with a default value
-            # Get current date and time using datetime module 
-            now = datetime.datetime.now()
-            # Format date as weekday, day, month and year 
-            date = now.strftime("%A, %d %B, %Y")
-            # Format time as hour, minute and second 
-            time = now.strftime("%I:%M:%S %p")
-            # Check if internet parameter is set to on
-            if internet == "on":
-                # Send a GET request to the DuckDuckGo API endpoint with the query parameter as the query and limit the results to 5
-                ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
-                # Check if the response status code is OK 
-                if ddg_response.ok:
-                    # Parse the ddg_response as a JSON object and store it in a variable called ddg_data
-                    ddg_data = ddg_response.json()
-                    # Create an empty list called formatted_data to store the formatted link and snippet strings
-                    formatted_data = []
-                    # Loop through each item in the ddg_data list and extract the link and snippet values
-                    for item in ddg_data:
-                        link = item["link"]
-                        snippet = item["snippet"]
-                        # Use string formatting to create a string that follows the template "link: (the link), snippet: (the snippet)." for each item and append it to the formatted_data list
-                        formatted_string = f"link: {link}, snippet: {snippet}."
-                        formatted_data.append(formatted_string)
-                    # Join the formatted_data list with a space as a separator and store it in a variable called formatted_output
-                    formatted_output = " ".join(formatted_data)
-                    # Assign the formatted_output to a variable called internet_output 
-                    internet_output = formatted_output 
-                     # Assign the date to a variable called current_date
-                    current_date = date
-                    # Assign the time to a variable called current_time
-                    current_time = time
-                    # System message
-                    system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
-                else:
-                    # Print or return the response text to see what the response contains 
-                    print(ddg_response.text)
-                    # Return a message with 200 status code saying that the web scraping failed 
-                    return flask.jsonify({"message": "Web scraping failed. Please try again later."}), 200
-# Create list of messages with the modified system_message as the first element and the user's query as the second element
-            messages = [
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": query}
-            ]
-            # Pass list of messages to g4f.ChatCompletion.create method with model as 'gpt-4' and provider as g4f.Provider.GetGpt
-            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Liaobots, messages=messages)
-            # Return response as json object with 200 status code
-            return flask.make_response(response), 200
+
+    now = datetime.datetime.now()
+    date = now.strftime("%A, %d %B, %Y")
+    time = now.strftime("%I:%M:%S %p")
+
+    if internet == "on":
+        ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
+        if ddg_response.ok:
+            ddg_data = ddg_response.json()
+            formatted_data = []
+            for item in ddg_data:
+                link = item["link"]
+                snippet = item["snippet"]
+                formatted_string = f"link: {link}, snippet: {snippet}."
+                formatted_data.append(formatted_string)
+            formatted_output = " ".join(formatted_data)
+            internet_output = formatted_output 
+            current_date = date
+            current_time = time
+            system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
+        else:
+            print(ddg_response.text)
+            return flask.jsonify({"message": "Web scraping failed. Please try again later."}), 200
+
+    messages = [
+        {"role": "system", "content": system_message},
+        {"role": "user", "content": query}
+    ]
+    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Liaobots, messages=messages)
+    return flask.make_response(response), 200
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;1500 per day", key_func=lambda: request.args.get('id'))
