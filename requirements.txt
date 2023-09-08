@@ -8,6 +8,6 @@ js2py @ git+https://github.com/PiotrDabkowski/js2py.git
 freeGPT @ git+https://github.com/Ruu3f/freeGPT.git
 serverless-wsgi==3.0.2
 asgiref==3.7.2
-Pillow @ git+https://github.com/python-pillow/Pillow.git
+Pillow==3.7.0
 wheel @ git+https://github.com/pypa/wheel.git
 youtube-transcript-api @ git+https://github.com/jdepoix/youtube-transcript-api.git
