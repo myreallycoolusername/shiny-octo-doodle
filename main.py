@@ -26,7 +26,7 @@ system_messages = {
 }
 
 # Create a MongoClient instance and connect to MongoDB database 
-client = MongoClient(os.getenv('mongodb'))
+client = MongoClient(os.getenv('MONGODB'))
 db = client.database
 
 # Create a Limiter instance and pass it the get_remote_address function and the app instance 
