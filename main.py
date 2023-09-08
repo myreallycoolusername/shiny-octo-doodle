@@ -167,7 +167,7 @@ def transcript():
     print(f"id: {id} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
-    system_message = os.getenv('vid')
+    system_message = os.getenv('V_MODE')
 
     now = datetime.datetime.now()
     date = now.strftime("%A, %d %B, %Y")
