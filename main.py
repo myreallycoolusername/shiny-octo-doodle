@@ -18,11 +18,11 @@ app = flask.Flask(__name__)
 
 # Define system messages for each mode
 system_messages = {
-    "cat": os.getenv('cat'),
-    "dog": os.getenv('dog'),
-  "info": os.getenv('promptclone'),
-  "normal": os.getenv('normal'),
-  "devmode": os.getenv('devmode')  
+    "cat": os.getenv('CAT_MODE'),
+    "dog": os.getenv('DOG_MODE'),
+  "info": os.getenv('I_MODE'),
+  "normal": os.getenv('DEFAULT'),
+  "devmode": os.getenv('DEV_MODE')  
 }
 
 # Create a MongoClient instance and connect to MongoDB database 
@@ -33,7 +33,7 @@ db = client.database
 limiter = Limiter(
     get_remote_address,
     app=app,
-    storage_uri=os.getenv('mongodb'),
+    storage_uri=os.getenv('MONGODB'),
     default_limits=["30 per minute", "1 per second"],
     strategy="fixed-window"
 )
