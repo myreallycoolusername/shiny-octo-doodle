@@ -75,7 +75,7 @@ def check_rate_limit(id):
         return False
 
 # Define route for api url
-@app.route("/")
+@app.route("/chat")
 # Use limiter.limit decorator to apply rate limits to api function 
 @limiter.limit("10 per minute;2000 per day", key_func=lambda: request.args.get('id'))
 def api():
@@ -200,6 +200,10 @@ def transcript():
     ]
     response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.DeepAi, messages=messages)
     return flask.make_response(response), 200
+# Default page
+@app.route('/')
+def home():
+    return 'welcome to my super duper awesome api!'
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
