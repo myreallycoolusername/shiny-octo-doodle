@@ -5,7 +5,7 @@ from flask import Flask, request, send_file
 import requests
 import asgiref
 import uuid
-#from flask_executor import Executor
+from flask_executor import Executor
 import datetime
 import os
 from PIL import Image
@@ -198,12 +198,12 @@ def transcript():
         {"role": "system", "content": system_message},
         {"role": "user", "content": query}
     ]
-    response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.DeepAi, messages=messages)
+    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.ChatBase, messages=messages)
     return flask.make_response(response), 200
 # Default page
 @app.route('/')
 def home():
-    return 'welcome to my super duper awesome api! ;)\n\soon™'
+    return 'hello hoomans. welcome to my super duper awesome api in flask! ;)\nhow to use api coming soon™'
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
