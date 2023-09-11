@@ -156,7 +156,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             # Pass list of messages to g4f.ChatCompletion.create method with model as 'gpt-4' and provider as g4f.Provider.GetGpt
-            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.DeepAi, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.ChatBase, messages=messages)
             # Return response as json object with 200 status code
             return flask.make_response(response), 200
 @app.route('/transcript', methods=['GET'])
@@ -192,7 +192,7 @@ def transcript():
             system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
         else:
             print(ddg_response.text)
-            return flask.jsonify({"message": "Web scraping failed. Please try again later."}), 200
+            return flask.jsonify({"message": "Web scraping failed. Please try again later. Problem probably caused by the internet api."}), 200
 
     messages = [
         {"role": "system", "content": system_message},
@@ -203,7 +203,7 @@ def transcript():
 # Default page
 @app.route('/')
 def home():
-    return 'welcome to my super duper awesome api!'
+    return 'welcome to my super duper awesome api! ;)\n\soon™'
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
