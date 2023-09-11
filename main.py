@@ -77,7 +77,7 @@ def check_rate_limit(id):
 # Define route for api url
 @app.route("/")
 # Use limiter.limit decorator to apply rate limits to api function 
-@limiter.limit("1000 per hour")
+@limiter.limit("10 per minute;2000 per day", key_func=lambda: request.args.get('id'))
 def api():
     # Get query, id, mode and internet from url parameters using request.args dictionary 
     args = flask.request.args 
@@ -202,18 +202,33 @@ def transcript():
     return flask.make_response(response), 200
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
-@limiter.limit("10 per minute;1500 per day", key_func=lambda: request.args.get('id'))
+@limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
 async def generate():
     id = request.args.get('id')
-    print(f"id: {id}")
     prompt = request.args.get('prompt')
     resp = await getattr(freeGPT, "prodia").Generation().create(prompt)
     img = Image.open(BytesIO(resp))
-    img_io = BytesIO()
-    img.save(img_io, 'PNG')
-    img_io.seek(0)
-    return send_file(img_io, mimetype='image/png')
+    
+    # Generate a random string for the filename
+    filename = f"{uuid.uuid4()}.png"
+    
+    # Ensure the static folder exists
+    os.makedirs('static', exist_ok=True)
+    
+    # Save the image to the static folder
+    filepath = os.path.join('static', filename)
+    img.save(filepath)
 
+    # Schedule the deletion of the image file after 5 minutes
+    executor.submit(delete_image, filepath, delay=300)
+
+    # Redirect the user to the URL of the saved image
+    return redirect(url_for('static', filename=filename))
+
+def delete_image(filepath, delay):
+    time.sleep(delay)
+    if os.path.exists(filepath):
+        os.remove(filepath)
 
 # Run app on port 5000 (default)
 if __name__ == "__main__":
