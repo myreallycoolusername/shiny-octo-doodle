@@ -85,8 +85,10 @@ def api():
     id = args.get("id")
     mode = args.get("mode")
     internet = args.get("internet")
-    # Print id to console
-    print(id)
+    # Ip address (for logging purposes)
+    ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+    # Print id and ip to console
+    print(id + 'ip: ' + ip)
     # Check rate limit for id
     if check_rate_limit(id):
         # Return message with 200 status code saying rate limit exceeded
@@ -166,7 +168,8 @@ def transcript():
     id = request.args.get('id')
     query = request.args.get('query')
     internet = request.args.get('search')
-    print(f"id: {id} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
+    ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+    print(f"id: {id} with ip {ip} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
     system_message = os.getenv('V_MODE')
@@ -203,7 +206,9 @@ def transcript():
 # Default page
 @app.route('/')
 def home():
+    ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
     return 'hello hoomans. welcome to my super duper awesome api in flask! ;)\nhow to use api coming soon™'
+    print(f"hooman ip captured: {ip}")
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
@@ -212,6 +217,8 @@ async def generate():
     prompt = request.args.get('prompt')
     resp = await getattr(freeGPT, "prodia").Generation().create(prompt)
     img = Image.open(BytesIO(resp))
+    ip = request.environ.get('HTTP_X_FORWARDED_FOR', request.remote_addr)
+    print(f"ip captured: {ip}")
     
     # Generate a random string for the filename
     filename = f"{uuid.uuid4()}.png"
