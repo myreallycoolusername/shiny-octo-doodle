@@ -206,9 +206,17 @@ def transcript():
 # Default page
 @app.route('/')
 def home():
-    ip = request.environ.get(request.remote_addr)
-    return 'hello hoomans. welcome to my super duper awesome api in flask! ;)\nhow to use api coming soon™'
-    print(f"hooman ip captured: {ip}")
+    # Try to get the visitor IP address from the X-Forwarded-For header
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, try to get the visitor IP address from the True-Client-IP header
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+    # If the header is None, use the remote_addr attribute instead
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+    # Print the visitor IP to console
+    print(f"Visitor IP: {visitor_ip}")
+    return 'hello hoomans. welcome to my super duper awesome api in flask! ;)\nhow to use api coming soon™.'
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
