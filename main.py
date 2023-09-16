@@ -100,7 +100,7 @@ def api():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP: {visitor_ip}")
+    print(f"Visitor IP on /chat: {visitor_ip}")
     # Check rate limit for id
     if check_rate_limit(id):
         # Return message with 200 status code saying rate limit exceeded
@@ -235,7 +235,7 @@ def home():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP: {visitor_ip}")
+    print(f"Visitor IP on homepage: {visitor_ip}")
     return 'hello hoomans. welcome to my super duper awesome api in flask! ;)\nhow to use api coming soon™.'
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
@@ -254,7 +254,7 @@ async def generate():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP: {visitor_ip} and ID {id}")
+    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}")
 
     
     # Generate a random string for the filename
