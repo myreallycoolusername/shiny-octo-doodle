@@ -91,6 +91,7 @@ def api():
     id = args.get("id")
     mode = args.get("mode")
     internet = args.get("internet")
+    useragent = request.headers.get("user-agent")
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
@@ -100,7 +101,7 @@ def api():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP on /chat: {visitor_ip}")
+    print(f"Visitor IP on /chat: {visitor_ip}, useragent: {useragent}")
     # Check rate limit for id
     if check_rate_limit(id):
         # Return message with 200 status code saying rate limit exceeded
@@ -180,6 +181,7 @@ def transcript():
     id = request.args.get('id')
     query = request.args.get('query')
     internet = request.args.get('search')
+    useragent = request.headers.get("user-agent")
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
@@ -189,7 +191,7 @@ def transcript():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
+    print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
     system_message = os.getenv('V_MODE')
@@ -226,6 +228,7 @@ def transcript():
 # Default page
 @app.route('/')
 def home():
+    useragent = request.headers.get("user-agent")
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
@@ -235,7 +238,7 @@ def home():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP on homepage: {visitor_ip}")
+    print(f"Visitor IP on homepage: {visitor_ip} with useragent: {useragent}")
     return 'hello hoomans. welcome to my super duper awesome api in flask! ;)\nhow to use api coming soon™.'
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
@@ -243,6 +246,7 @@ def home():
 async def generate():
     id = request.args.get('id')
     prompt = request.args.get('prompt')
+    useragent = request.headers.get('user-agent')
     resp = await getattr(freeGPT, "prodia").Generation().create(prompt)
     img = Image.open(BytesIO(resp))
     # Try to get the visitor IP address from the X-Forwarded-For header
@@ -254,7 +258,7 @@ async def generate():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}")
+    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}")
 
     
     # Generate a random string for the filename
