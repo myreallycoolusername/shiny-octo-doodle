@@ -85,10 +85,16 @@ def api():
     id = args.get("id")
     mode = args.get("mode")
     internet = args.get("internet")
-    # Ip address (for logging purposes)
-    ip = request.environ.get(request.remote_addr)
-    # Print id and ip to console
-    print(id + 'ip: ' + ip)
+    # Try to get the visitor IP address from the X-Forwarded-For header
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, try to get the visitor IP address from the True-Client-IP header
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+    # If the header is None, use the remote_addr attribute instead
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+    # Print the visitor IP to console
+    print(f"Visitor IP: {visitor_ip}")
     # Check rate limit for id
     if check_rate_limit(id):
         # Return message with 200 status code saying rate limit exceeded
@@ -168,8 +174,16 @@ def transcript():
     id = request.args.get('id')
     query = request.args.get('query')
     internet = request.args.get('search')
-    ip = request.environ.get(request.remote_addr)
-    print(f"id: {id} with ip {ip} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
+    # Try to get the visitor IP address from the X-Forwarded-For header
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, try to get the visitor IP address from the True-Client-IP header
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+    # If the header is None, use the remote_addr attribute instead
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+    # Print the visitor IP to console
+    print(f"id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. if long numbers, request from discord, else, it is either testing or someone messing around")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
     system_message = os.getenv('V_MODE')
@@ -225,8 +239,17 @@ async def generate():
     prompt = request.args.get('prompt')
     resp = await getattr(freeGPT, "prodia").Generation().create(prompt)
     img = Image.open(BytesIO(resp))
-    ip = request.environ.get(request.remote_addr)
-    print(f"ip captured: {ip}")
+    # Try to get the visitor IP address from the X-Forwarded-For header
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, try to get the visitor IP address from the True-Client-IP header
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+    # If the header is None, use the remote_addr attribute instead
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+    # Print the visitor IP to console
+    print(f"Visitor IP: {visitor_ip} and ID {id}")
+
     
     # Generate a random string for the filename
     filename = f"{uuid.uuid4()}.png"
