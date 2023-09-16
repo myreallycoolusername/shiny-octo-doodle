@@ -17,11 +17,9 @@ from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 from io import BytesIO
 
-ip_ban = IpBan()
+
 app = flask.Flask(__name__)
-ip_ban.init_app(app)
-ip_ban.block(os.getenv('IPBAN'), permanent=True)
-ip_ban.block_cidr(os.getenv('NETBAN'))
+
 
 
 # Define system messages for each mode
