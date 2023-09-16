@@ -20,8 +20,8 @@ from io import BytesIO
 ip_ban = IpBan()
 app = flask.Flask(__name__)
 ip_ban.init_app(app)
-ip_ban.block(os.getenv('ipban'), permanent=True)
-ip_ban.block_cidr('190.220.142.104/29')
+ip_ban.block(os.getenv('IPBAN'), permanent=True)
+ip_ban.block_cidr(os.getenv('NETBAN'))
 
 
 # Define system messages for each mode
