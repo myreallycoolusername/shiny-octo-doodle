@@ -17,10 +17,27 @@ from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 from io import BytesIO
 
+# Get the banned IPs (not ip range) from the environment variable
+ipban = os.getenv("IPBAN")
+
+# Split the banned IPs by commas and convert them to a set
+ipban = set(ipban.split(","))
+
+# Get the banned IPs (ip range) from the environment variable
+netban = os.getenv("NETBAN")
+
+# Split the banned IPs by commas and convert them to a set
+netban = set(netban.split(","))
 
 app = flask.Flask(__name__)
 
+ip_ban = IpBan(app)
 
+for ip in ipban:
+    ip_ban.block(ip)
+
+for ip in netban:
+    ip_ban.block_cidr(ip)
 
 # Define system messages for each mode
 system_messages = {
