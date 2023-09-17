@@ -31,7 +31,7 @@ netban = set(netban.split(","))
 
 app = flask.Flask(__name__)
 
-ip_ban = IpBan(app)
+ip_ban = IpBan(app=app)
 
 for ip in ipban:
     ip_ban.block(ip, permanent=True)
