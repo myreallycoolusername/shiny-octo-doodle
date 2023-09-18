@@ -8,7 +8,7 @@ import uuid
 from flask_executor import Executor
 import datetime
 import os
-from flask_ipban import IpBan
+from flask_ipban.ip_ban import IpBan
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
 # Import Flask-Limiter and PyMongo 
