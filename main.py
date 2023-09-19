@@ -29,9 +29,11 @@ netban = os.getenv("NETBAN")
 # Split the banned IPs by commas and convert them to a set
 netban = set(netban.split(","))
 
+ip_ban = IpBan()
+
 app = flask.Flask(__name__)
 
-ip_ban = IpBan(app=app)
+ip_ban.init_app(app)
 
 for ip in ipban:
     ip_ban.block(ip, permanent=True)
