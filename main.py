@@ -20,14 +20,8 @@ from io import BytesIO
 # Get the banned IPs (not ip range) from the environment variable
 ipban = os.getenv("IPBAN")
 
-# Split the banned IPs by commas and convert them to a set
-ipban = set(ipban.split(","))
-
 # Get the banned IPs (ip range) from the environment variable
 netban = os.getenv("NETBAN")
-
-# Split the banned IPs by commas and convert them to a set
-netban = set(netban.split(","))
 
 ip_ban = IpBan()
 
