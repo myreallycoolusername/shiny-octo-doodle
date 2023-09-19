@@ -11,7 +11,7 @@ import os
 from flask_ipban.ip_ban import IpBan
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
-# Import Flask-Limiter and PyMongo 
+# Import Flask-Limiter and PyMongo.
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
