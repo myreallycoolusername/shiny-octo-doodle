@@ -20,8 +20,14 @@ from io import BytesIO
 # Get the banned IPs (not ip range) from the environment variable
 ipban = os.getenv("IPBAN")
 
+# Split the banned IPs by commas and convert them to a set
+ipban = set(ipban.split(","))
+
 # Get the banned IPs (ip range) from the environment variable
 netban = os.getenv("NETBAN")
+
+# Split the banned IPs by commas and convert them to a set
+netban = set(netban.split(","))
 
 ip_ban = IpBan()
 
@@ -29,10 +35,12 @@ app = flask.Flask(__name__)
 
 ip_ban.init_app(app)
 
+for ip in ipban:
+    ip_ban.block([ip], permanent=True)
 
-ip_ban.block(ipban, permanent=True)
-
-ip_ban.block_cidr(netban)
+for ipnet in netban:
+    ip_ban.block_cidr([ipnet])
+    
 
 # Define system messages for each mode
 system_messages = {
