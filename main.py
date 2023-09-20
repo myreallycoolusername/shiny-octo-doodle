@@ -37,10 +37,11 @@ ip_ban.init_app(app)
 
 for ip in ipban:
     ip_ban.block(ip, permanent=True)
+    print(f"blocked {ip} done, if not then something is wrong with package")
 
 for ipnet in netban:
     ip_ban.block_cidr(ipnet)
-    
+    print(f"blocked {ipnet}")
 
 # Define system messages for each mode
 system_messages = {
