@@ -36,10 +36,10 @@ app = flask.Flask(__name__)
 ip_ban.init_app(app)
 
 for ip in ipban:
-    ip_ban.block([ip], permanent=True)
+    ip_ban.block(ip, permanent=true)
 
 for ipnet in netban:
-    ip_ban.block_cidr([ipnet])
+    ip_ban.block_cidr(ipnet)
     
 
 # Define system messages for each mode
