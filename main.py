@@ -33,7 +33,9 @@ ip_ban = IpBan()
 
 app = flask.Flask(__name__)
 
-ip_ban.init_app(app=app)
+executor = Executor(app)
+
+ip_ban.init_app(app)
 
 for ip in ipban:
     ip_ban.block(ip, permanent=True)
