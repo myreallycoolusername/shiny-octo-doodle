@@ -14,3 +14,5 @@ youtube-transcript-api @ git+https://github.com/jdepoix/youtube-transcript-api.g
 Flask-Executor
 uuid
 flask-ipban
+flask-ipblock
+mongoengine
