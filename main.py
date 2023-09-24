@@ -27,6 +27,9 @@ ipban = os.getenv("IPBAN")
 # Split the banned IPs by commas and convert them to a set
 ipban = set(ipban.split(","))
 
+# Strip any whitespace from the IP addresses
+ipban = [ip.strip() for ip in ipban]
+
 executor = Executor(app)
 
 # Set up IPBlock
@@ -37,6 +40,9 @@ netban = os.getenv("NETBAN")
 
 # Split the banned IPs by commas and convert them to a set
 netban = set(netban.split(","))
+
+# Strip any whitespace from the IP addresses
+netban = [ip.strip() for ip in netban]
 
 # Create a MongoEngine document corresponding to a range of IP addresses
 IPNetwork.objects.create_from_string(netban, label='spite')
@@ -293,6 +299,22 @@ async def generate():
 
     # Redirect the user to the URL of the saved image
     return redirect(url_for('static', filename=filename))
+
+# Define a function to check the IP before each request
+@app.before_request
+def check_ip():
+  # Get the IP from the X-Forwarded-For header
+  ip = request.headers.get("X-Forwarded-For")
+  # If the header is None, get the IP from the X-Real-IP header
+  if ip is None:
+    ip = request.headers.get("X-Real-IP")
+  # If the IP is still None, get the IP from the request.remote_addr attribute
+  if ip is None:
+    ip = request.remote_addr
+  # If the IP is in the list of banned IPs, abort the request with a 403 error
+  if ip in ipban:
+    abort(403)
+      print(f"an IP banned {ip} accessed the api")
 
 def delete_image(filepath, delay):
     time.sleep(delay)
