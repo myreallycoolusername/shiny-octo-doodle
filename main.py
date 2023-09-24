@@ -2,13 +2,15 @@ import g4f
 import freeGPT
 import flask
 from flask import Flask, request, send_file
+from flask_ipblock import IPBlock
+from flask_ipblock.documents import IPNetwork
 import requests
 import asgiref
+from mongoengine import connect
 import uuid
 from flask_executor import Executor
 import datetime
 import os
-from flask_ipban.ip_ban import IpBan
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
 # Import Flask-Limiter and PyMongo.
@@ -16,6 +18,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 from io import BytesIO
+
+connect(host=os.getenv('MONGODB2'))
 
 # Get the banned IPs (not ip range) from the environment variable
 ipban = os.getenv("IPBAN")
@@ -29,21 +33,13 @@ netban = os.getenv("NETBAN")
 # Split the banned IPs by commas and convert them to a set
 netban = set(netban.split(","))
 
-ip_ban = IpBan()
-
-app = flask.Flask(__name__)
-
 executor = Executor(app)
 
-ip_ban.init_app(app)
+# Set up IPBlock
+ipblock = IPBlock(app)
 
-for ip in ipban:
-    ip_ban.block(ip, permanent=True)
-    print(f"blocked {ip} done, if not then something is wrong with package")
-
-for ipnet in netban:
-    ip_ban.block_cidr(ipnet)
-    print(f"blocked {ipnet}")
+# Create a MongoEngine document corresponding to a range of IP addresses
+IPNetwork.objects.create_from_string(os.getenv('IPNET'), label='spite')
 
 # Define system messages for each mode
 system_messages = {
