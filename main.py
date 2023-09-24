@@ -47,7 +47,7 @@ netban = set(netban.split(","))
 netban = [ip.strip() for ip in netban]
 
 # Create a MongoEngine document corresponding to a range of IP addresses
-IPNetwork.objects.create_from_string(netban, label='spite')
+IPNetwork.objects.create_from_string(netban, label='spite', many=True)
 
 # Define system messages for each mode
 system_messages = {
