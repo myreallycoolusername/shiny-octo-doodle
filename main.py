@@ -314,7 +314,6 @@ def check_ip():
   # If the IP is in the list of banned IPs, abort the request with a 403 error
   if ip in ipban:
     abort(403)
-      print(f"an IP banned {ip} accessed the api")
 
 def delete_image(filepath, delay):
     time.sleep(delay)
