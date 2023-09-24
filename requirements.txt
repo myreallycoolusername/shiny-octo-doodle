@@ -17,3 +17,4 @@ flask-ipban
 flask-ipblock
 mongoengine
 PyExecJS
+netaddr
