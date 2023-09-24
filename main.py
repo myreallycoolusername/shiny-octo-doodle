@@ -19,6 +19,8 @@ from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 from io import BytesIO
 
+app = Flask(__name__)
+
 connect(host=os.getenv('MONGODB2'))
 
 # Get the banned IPs (not ip range) from the environment variable
