@@ -16,3 +16,4 @@ uuid
 flask-ipban
 flask-ipblock
 mongoengine
+execjs
