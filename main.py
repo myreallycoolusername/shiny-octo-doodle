@@ -27,19 +27,19 @@ ipban = os.getenv("IPBAN")
 # Split the banned IPs by commas and convert them to a set
 ipban = set(ipban.split(","))
 
+executor = Executor(app)
+
+# Set up IPBlock
+ipblock = IPBlock(app)
+
 # Get the banned IPs (ip range) from the environment variable
 netban = os.getenv("NETBAN")
 
 # Split the banned IPs by commas and convert them to a set
 netban = set(netban.split(","))
 
-executor = Executor(app)
-
-# Set up IPBlock
-ipblock = IPBlock(app)
-
 # Create a MongoEngine document corresponding to a range of IP addresses
-IPNetwork.objects.create_from_string(os.getenv('IPNET'), label='spite')
+IPNetwork.objects.create_from_string(netban, label='spite')
 
 # Define system messages for each mode
 system_messages = {
