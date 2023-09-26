@@ -35,10 +35,10 @@ ip_range = [ipaddress.ip_network(ip) for ip in ip_range]
 ip_ban = os.getenv("IPBAN")
 
 # Split the banned IPs by commas and convert them to a set
-ip_ban = set(ipban.split(","))
+ip_ban = set(ip_ban.split(","))
 
 # Strip any whitespace from the IP addresses
-ip_ban = [ip.strip() for ip in ipban]
+ip_ban = [ip.strip() for ip in ip_ban]
 
 executor = Executor(app)
 
