@@ -5,6 +5,7 @@ from flask import Flask, request, send_file, render_template
 import requests
 import asgiref
 import uuid
+import sentry_sdk
 from flask_executor import Executor
 import ipaddress
 import datetime
@@ -18,6 +19,17 @@ from pymongo import MongoClient
 from io import BytesIO
 
 app = Flask(__name__)
+
+sentry_sdk.init(
+    dsn=os.getenv('SENTRYDSN'),
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    traces_sample_rate=1.0,
+    # Set profiles_sample_rate to 1.0 to profile 100%
+    # of sampled transactions.
+    # We recommend adjusting this value in production.
+    profiles_sample_rate=1.0,
+)
 
 # Get the banned IPs (ip range) from the environment variable
 ip_range = os.getenv("NETBAN")
