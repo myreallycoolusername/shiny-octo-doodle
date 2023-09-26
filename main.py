@@ -2,13 +2,12 @@ import g4f
 import freeGPT
 import flask
 from flask import Flask, request, send_file
-from flask_ipblock import IPBlock
-from flask_ipblock.documents import IPNetwork
 import requests
 import asgiref
 from mongoengine import connect
 import uuid
 from flask_executor import Executor
+import ipaddress
 import datetime
 import os
 from PIL import Image
@@ -21,7 +20,17 @@ from io import BytesIO
 
 app = Flask(__name__)
 
-connect(host=os.getenv('MONGODB2'))
+# Get the banned IPs (ip range) from the environment variable
+ip_range = os.getenv("NETBAN")
+
+# Convert the value to a Python list by splitting it by commas
+ip_range = ip_range.split(",")
+
+# Strip any whitespace from the IP ranges
+ip_range = [ip.strip() for ip in ip_range]
+
+# Convert the IP ranges to IPv4Network or IPv6Network objects
+ip_range = [ipaddress.ip_network(ip) for ip in ip_range]
 
 # Get the banned IPs (not ip range) from the environment variable
 ipban = os.getenv("IPBAN")
@@ -33,21 +42,6 @@ ipban = set(ipban.split(","))
 ipban = [ip.strip() for ip in ipban]
 
 executor = Executor(app)
-
-# Set up IPBlock
-ipblock = IPBlock(app)
-
-# Get the banned IPs (ip range) from the environment variable
-netban = os.getenv("NETBAN")
-
-# Split the banned IPs by commas and convert them to a set
-netban = set(netban.split(","))
-
-# Strip any whitespace from the IP addresses
-netban = [ip.strip() for ip in netban]
-
-# Create a MongoEngine document corresponding to a range of IP addresses
-IPNetwork.objects.create_from_string(netban, label='spite', many=True)
 
 # Define system messages for each mode
 system_messages = {
@@ -313,10 +307,20 @@ def check_ip():
   # If the IP is still None, get the IP from the request.remote_addr attribute
   if ip is None:
     ip = request.remote_addr
-  # If the IP is in the list of banned IPs, abort the request with a 403 error
-  if ip in ipban:
-    print(f"IP {ip} is banned from accessing the API but tried accessing the API")  
-    abort(403)
+  # Convert the IP address to IPv4Address or IPv6Address object
+  ip = ipaddress.ip_address(ip)
+  # Loop through the list of banned ranges
+  for range in ip_range:
+    # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
+    if ip in range:
+      print(f"IP {ip} is banned from accessing the API but tried accessing the API")
+      abort(403)
+  # Loop through the list of banned addresses
+  for address in ip_ban:
+    # If the IP address matches a banned address, abort the request with a 403 error and print the IP
+    if ip == address:
+      print(f"IP {ip} is banned from accessing the API but tried accessing the API")
+      abort(403)
 
 def delete_image(filepath, delay):
     time.sleep(delay)
