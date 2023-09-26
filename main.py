@@ -4,7 +4,6 @@ import flask
 from flask import Flask, request, send_file
 import requests
 import asgiref
-from mongoengine import connect
 import uuid
 from flask_executor import Executor
 import ipaddress
@@ -33,13 +32,13 @@ ip_range = [ip.strip() for ip in ip_range]
 ip_range = [ipaddress.ip_network(ip) for ip in ip_range]
 
 # Get the banned IPs (not ip range) from the environment variable
-ipban = os.getenv("IPBAN")
+ip_ban = os.getenv("IPBAN")
 
 # Split the banned IPs by commas and convert them to a set
-ipban = set(ipban.split(","))
+ip_ban = set(ipban.split(","))
 
 # Strip any whitespace from the IP addresses
-ipban = [ip.strip() for ip in ipban]
+ip_ban = [ip.strip() for ip in ipban]
 
 executor = Executor(app)
 
