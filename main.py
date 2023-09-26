@@ -321,6 +321,10 @@ def check_ip():
       print(f"IP {ip} is banned from accessing the API but tried accessing the API")
       abort(403)
 
+@app.errorhandler(404)
+# defining function
+  return render_template("404.html")
+
 def delete_image(filepath, delay):
     time.sleep(delay)
     if os.path.exists(filepath):
