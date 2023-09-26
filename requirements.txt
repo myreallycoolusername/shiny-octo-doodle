@@ -15,4 +15,4 @@ Flask-Executor
 uuid
 ipaddress
 PyExecJS
-
+sentry_sdk[flask]
