@@ -1,7 +1,7 @@
 import g4f
 import freeGPT
 import flask
-from flask import Flask, request, send_file
+from flask import Flask, request, send_file, render_template
 import requests
 import asgiref
 import uuid
@@ -322,6 +322,8 @@ def check_ip():
       abort(403)
 
 @app.errorhandler(404)
+# inbuilt function which takes error as parameter
+def not_found(e):
 # defining function
   return render_template("404.html")
 
