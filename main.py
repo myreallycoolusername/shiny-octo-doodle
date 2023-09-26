@@ -18,8 +18,6 @@ from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 from io import BytesIO
 
-app = Flask(__name__)
-
 sentry_sdk.init(
     dsn=os.getenv('SENTRYDSN'),
     # Set traces_sample_rate to 1.0 to capture 100%
@@ -30,6 +28,8 @@ sentry_sdk.init(
     # We recommend adjusting this value in production.
     profiles_sample_rate=1.0,
 )
+
+app = Flask(__name__)
 
 # Get the banned IPs (ip range) from the environment variable
 ip_range = os.getenv("NETBAN")
