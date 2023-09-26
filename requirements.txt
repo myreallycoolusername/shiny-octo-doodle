@@ -13,8 +13,6 @@ wheel @ git+https://github.com/pypa/wheel.git
 youtube-transcript-api @ git+https://github.com/jdepoix/youtube-transcript-api.git
 Flask-Executor
 uuid
-flask-ipban
-flask-ipblock
-mongoengine
+ipaddress
 PyExecJS
-netaddr
+
