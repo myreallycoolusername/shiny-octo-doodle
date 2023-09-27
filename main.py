@@ -2,7 +2,7 @@
 import g4f
 import freeGPT
 import flask
-from flask import Flask, request, send_file, render_template
+from flask import Flask, request, send_file, render_template, abort
 import requests
 import asgiref
 import uuid
