@@ -120,6 +120,9 @@ def api():
     args = flask.request.args 
     query = args.get("msg")
     id = args.get("id")
+    banned_ids = os.getenv('bannedid').split(',')
+    if id in banned_ids:
+        return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     mode = args.get("mode")
     internet = args.get("internet")
     useragent = request.headers.get("user-agent")
@@ -210,6 +213,9 @@ def api():
 def transcript():
     videoid = request.args.get('videoid')
     id = request.args.get('id')
+    banned_ids = os.getenv('bannedid').split(',')
+    if id in banned_ids:
+        return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     query = request.args.get('query')
     internet = request.args.get('search')
     useragent = request.headers.get("user-agent")
@@ -276,6 +282,9 @@ def home():
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
 async def generate():
     id = request.args.get('id')
+    banned_ids = os.getenv('bannedid').split(',')
+    if id in banned_ids:
+        return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     prompt = request.args.get('prompt')
     useragent = request.headers.get('user-agent')
     resp = await getattr(freeGPT, "prodia").Generation().create(prompt)
