@@ -343,11 +343,11 @@ def check_ip():
       print(f"IP {ip} is banned from accessing the API but tried accessing the API")
       abort(403)
 
-@app.errorhandler(500)
+@app.errorhandler(404)
 # inbuilt function which takes error as parameter
 def not_found(e):
 # defining function
-  return render_template('404.html'), 500
+  return render_template('404.html'), 404
 
 def delete_image(filepath, delay):
     time.sleep(delay)
