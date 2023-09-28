@@ -334,7 +334,7 @@ def check_ip():
   for range in ip_range:
     # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
     if ip in range:
-      print(f"IP {ip} is banned from accessing the API but tried accessing the API")
+      print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
       abort(403)
   # Loop through the list of banned addresses
   for address in ip_ban:
@@ -347,7 +347,7 @@ def check_ip():
 # inbuilt function which takes error as parameter
 def not_found(e):
 # defining function
-  return render_template('errors/404.html'), 404
+  return render_template('./errors/404.html'), 404
 
 def delete_image(filepath, delay):
     time.sleep(delay)
