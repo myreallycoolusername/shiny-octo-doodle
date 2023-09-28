@@ -347,7 +347,7 @@ def check_ip():
 # inbuilt function which takes error as parameter
 def not_found(e):
 # defining function
-  return render_template('./errors/404.html'), 500
+  return render_template('404.html'), 500
 
 def delete_image(filepath, delay):
     time.sleep(delay)
