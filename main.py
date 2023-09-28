@@ -120,7 +120,7 @@ def api():
     args = flask.request.args 
     query = args.get("msg")
     id = args.get("id")
-    banned_ids = os.getenv('bannedid').split(',')
+    banned_ids = os.getenv('BANNEDIDS').split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     mode = args.get("mode")
@@ -213,7 +213,7 @@ def api():
 def transcript():
     videoid = request.args.get('videoid')
     id = request.args.get('id')
-    banned_ids = os.getenv('bannedid').split(',')
+    banned_ids = os.getenv('BANNEDIDS').split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     query = request.args.get('query')
