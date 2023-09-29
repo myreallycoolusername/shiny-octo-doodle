@@ -120,7 +120,8 @@ def api():
     args = flask.request.args 
     query = args.get("msg")
     id = args.get("id")
-    banned_ids = os.getenv('BANNEDIDS').split(',')
+    banned_ids = os.getenv('BANNEDIDS')
+    banned_ids = banned_ids.split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     mode = args.get("mode")
@@ -213,7 +214,8 @@ def api():
 def transcript():
     videoid = request.args.get('videoid')
     id = request.args.get('id')
-    banned_ids = os.getenv('BANNEDIDS').split(',')
+    banned_ids = os.getenv('BANNEDIDS')
+    banned_ids = banned_ids.split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     query = request.args.get('query')
@@ -282,7 +284,8 @@ def home():
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
 async def generate():
     id = request.args.get('id')
-    banned_ids = os.getenv('bannedid').split(',')
+    banned_ids = os.getenv('BANNEDIDS')
+    banned_ids = banned_ids.split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     prompt = request.args.get('prompt')
@@ -348,6 +351,11 @@ def check_ip():
 def not_found(e):
 # defining function
   return render_template('404.html'), 404
+@app.errorhandler(500)
+# inbuilt function which takes error as parameter
+def server_err(e):
+# defining function
+  return render_template('500.html'), 500
 
 def delete_image(filepath, delay):
     time.sleep(delay)
