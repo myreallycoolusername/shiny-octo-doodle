@@ -278,7 +278,7 @@ def home():
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
     print(f"Visitor IP on homepage: {visitor_ip} with useragent: {useragent}")
-    return 'hello hoomans. welcome to my super duper awesome api in flask! ;)\nhow to use api coming soon™.'
+    return render_template('homepage.html')
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
