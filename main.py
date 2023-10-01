@@ -1,6 +1,6 @@
 # Import all necessary packages
 import g4f
-import freeGPT
+from freeGPT import AsyncClient
 import flask
 from flask import Flask, request, send_file, render_template, abort, url_for, redirect
 import requests
@@ -18,6 +18,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 from io import BytesIO
+from asyncio import run
 
 sentry_sdk.init(
     dsn=os.getenv('SENTRYDSN'),
@@ -290,7 +291,7 @@ async def generate():
         return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
     prompt = request.args.get('prompt')
     useragent = request.headers.get('user-agent')
-    resp = await getattr(freeGPT, "prodia").Generation().create(prompt)
+    resp = await AsyncClient.create_generation("prodia", prompt)
     img = Image.open(BytesIO(resp))
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
@@ -319,6 +320,7 @@ async def generate():
 
     # Redirect the user to the URL of the saved image
     return redirect(url_for('static', filename=filename))
+    run(generate())
 
 # Define a function to check the IP before each request
 @app.before_request
