@@ -358,6 +358,16 @@ def not_found(e):
 def server_err(e):
 # defining function
   return render_template('500.html'), 500
+@app.errorhandler(403)
+# inbuilt function which takes error as parameter
+def notallowed(e):
+# defining function
+  return render_template('403.html'), 403
+@app.errorhandler(429)
+# inbuilt function which takes error as parameter
+def limit(e):
+# defining function
+  return render_template('429.html'), 429
 
 def delete_image(filepath, delay):
     time.sleep(delay)
