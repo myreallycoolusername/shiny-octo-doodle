@@ -1,4 +1,4 @@
-g4f @ git+https://github.com/xtekky/gpt4free.git
+g4f==0.1.4.1 #@ git+https://github.com/xtekky/gpt4free.git
 flask==2.2.2
 async-timeout==4.0.2
 requests==2.26.0
