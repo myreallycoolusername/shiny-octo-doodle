@@ -62,6 +62,7 @@ system_messages = {
     "dog": os.getenv('DOG_MODE'),
   "info": os.getenv('I_MODE'),
   "normal": os.getenv('DEFAULT'),
+  "img": os.getenv('VID_MODE'),
   "devmode": os.getenv('DEV_MODE')  
 }
 
