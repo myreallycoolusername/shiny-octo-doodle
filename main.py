@@ -264,7 +264,7 @@ def transcript():
         {"role": "system", "content": system_message},
         {"role": "user", "content": query}
     ]
-    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.ChatBase, messages=messages)
+    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.GptChatly, messages=messages)
     return flask.make_response(response), 200
 # Default page
 @app.route('/')
