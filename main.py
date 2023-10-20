@@ -258,13 +258,13 @@ def transcript():
             system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
         else:
             print(ddg_response.text)
-            return flask.jsonify({"message": "Web scraping failed. Please try again later. Problem probably caused by the internet api."}), 200
+            return flask.jsonify({"message": "Web scraping failed. Please try again later or switch off the internet parameter."}), 200
 
     messages = [
         {"role": "system", "content": system_message},
         {"role": "user", "content": query}
     ]
-    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.GptChatly, messages=messages)
+    response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
     return flask.make_response(response), 200
 # Default page
 @app.route('/')
