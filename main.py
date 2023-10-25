@@ -14,6 +14,7 @@ import os
 from duckduckgo_search import DDGS
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
+from youtubesearchpython import Video, ResultMode
 # Import Flask-Limiter and PyMongo.
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
