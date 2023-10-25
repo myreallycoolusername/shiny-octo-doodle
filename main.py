@@ -235,6 +235,15 @@ def transcript():
     print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
+    video = Video.get('https://www.youtube.com/watch?v=z0GKGpObgPY', mode=ResultMode.json, get_upload_date=True) 
+
+title = video['title']
+secondsText = video['duration']['secondsText']
+viewCount = video['viewCount']['text']
+uploader = video['channel']['name']
+link = video['link'] 
+
+formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
 
     now = datetime.datetime.now()
     date = now.strftime("%A, %d %B, %Y")
@@ -258,7 +267,7 @@ for item in searches:
 
 formatted_output = " ".join(formatted_data)
 internet_output = formatted_output
-system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}. info of video: placeholder"
+system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}. info of video: {formatted_vid_info}"
 
     messages = [
         {"role": "system", "content": system_message},
