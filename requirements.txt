@@ -18,3 +18,4 @@ PyExecJS
 sentry_sdk[flask]
 werkzeug==2.3.6
 duckduckgo-search
+youtubesearchpython
