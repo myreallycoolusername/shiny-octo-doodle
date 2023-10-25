@@ -377,27 +377,3 @@ def delete_image(filepath, delay):
 # Run app on port 5000 (default)
 if __name__ == "__main__":
   app.run(host="0.0.0.0", port=3000)
-
-
-from duckduckgo_search import DDGS
-import os
-
-with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
-    for r in ddgs.text("something you need", max_results=50):
-        if type(r) == dict:
-            searches = [r]
-        else:
-            searches = r.json()
-        
-formatted_data = []
-for item in searches:
-    link = item["href"]
-    snippet = item["body"]
-    title = item["title"]
-    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
-    formatted_data.append(formatted_string)
-
-formatted_output = " ".join(formatted_data)
-internet_output = formatted_output
-print(internet_output + 'Works.')
-    
