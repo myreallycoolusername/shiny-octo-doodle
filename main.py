@@ -11,6 +11,7 @@ from flask_executor import Executor
 import ipaddress
 import datetime
 import os
+from duckduckgo_search import DDGS
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
 # Import Flask-Limiter and PyMongo.
@@ -172,25 +173,23 @@ def api():
             time = now.strftime("%I:%M:%S %p")
             # Check if internet parameter is set to on
             if internet == "on":
-                # Send a GET request to the DuckDuckGo API endpoint with the query parameter as the query and limit the results to 5
-                ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
-                # Check if the response status code is OK 
-                if ddg_response.ok:
-                    # Parse the ddg_response as a JSON object and store it in a variable called ddg_data
-                    ddg_data = ddg_response.json()
-                    # Create an empty list called formatted_data to store the formatted link and snippet strings
-                    formatted_data = []
-                    # Loop through each item in the ddg_data list and extract the link and snippet values
-                    for item in ddg_data:
-                        link = item["link"]
-                        snippet = item["snippet"]
-                        # Use string formatting to create a string that follows the template "link: (the link), snippet: (the snippet)." for each item and append it to the formatted_data list
-                        formatted_string = f"link: {link}, snippet: {snippet}."
-                        formatted_data.append(formatted_string)
-                    # Join the formatted_data list with a space as a separator and store it in a variable called formatted_output
-                    formatted_output = " ".join(formatted_data)
-                    # Assign the formatted_output to a variable called internet_output 
-                    internet_output = formatted_output 
+                with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
+    for r in ddgs.text(query, max_results=50):
+        if type(r) == dict:
+            searches = [r]
+        else:
+            searches = r.json()
+        
+formatted_data = []
+for item in searches:
+    link = item["href"]
+    snippet = item["body"]
+    title = item["title"]
+    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+    formatted_data.append(formatted_string)
+
+formatted_output = " ".join(formatted_data)
+internet_output = formatted_output
                      # Assign the date to a variable called current_date
                     current_date = date
                     # Assign the time to a variable called current_time
@@ -235,30 +234,30 @@ def transcript():
     print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
-    system_message = os.getenv('V_MODE')
 
     now = datetime.datetime.now()
     date = now.strftime("%A, %d %B, %Y")
     time = now.strftime("%I:%M:%S %p")
 
     if internet == "on":
-        ddg_response = requests.get(f"https://ddg-api.herokuapp.com/search?query={query}")
-        if ddg_response.ok:
-            ddg_data = ddg_response.json()
-            formatted_data = []
-            for item in ddg_data:
-                link = item["link"]
-                snippet = item["snippet"]
-                formatted_string = f"link: {link}, snippet: {snippet}."
-                formatted_data.append(formatted_string)
-            formatted_output = " ".join(formatted_data)
-            internet_output = formatted_output 
-            current_date = date
-            current_time = time
-            system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}. video's transcript: {formatted_transcript}."
+        with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
+    for r in ddgs.text(query, max_results=50):
+        if type(r) == dict:
+            searches = [r]
         else:
-            print(ddg_response.text)
-            return flask.jsonify({"message": "Web scraping failed. Please try again later or switch off the internet parameter."}), 200
+            searches = r.json()
+        
+formatted_data = []
+for item in searches:
+    link = item["href"]
+    snippet = item["body"]
+    title = item["title"]
+    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+    formatted_data.append(formatted_string)
+
+formatted_output = " ".join(formatted_data)
+internet_output = formatted_output
+system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}. info of video: placeholder"
 
     messages = [
         {"role": "system", "content": system_message},
@@ -378,3 +377,27 @@ def delete_image(filepath, delay):
 # Run app on port 5000 (default)
 if __name__ == "__main__":
   app.run(host="0.0.0.0", port=3000)
+
+
+from duckduckgo_search import DDGS
+import os
+
+with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
+    for r in ddgs.text("something you need", max_results=50):
+        if type(r) == dict:
+            searches = [r]
+        else:
+            searches = r.json()
+        
+formatted_data = []
+for item in searches:
+    link = item["href"]
+    snippet = item["body"]
+    title = item["title"]
+    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+    formatted_data.append(formatted_string)
+
+formatted_output = " ".join(formatted_data)
+internet_output = formatted_output
+print(internet_output + 'Works.')
+    
