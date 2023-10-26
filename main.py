@@ -173,14 +173,14 @@ def api():
             # Format time as hour, minute and second 
             time = now.strftime("%I:%M:%S %p")
             # Check if internet parameter is set to on
-            if internet == "on":
-                with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
-    for r in ddgs.text(query, max_results=50):
-        if type(r) == dict:
-            searches = [r]
-        else:
-            searches = r.json()
-        
+if internet == "on":
+    with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
+        for r in ddgs.text(query, max_results=50):
+            if type(r) == dict:
+                searches = [r]
+            else:
+                searches = r.json()
+
 formatted_data = []
 for item in searches:
     link = item["href"]
@@ -191,26 +191,15 @@ for item in searches:
 
 formatted_output = " ".join(formatted_data)
 internet_output = formatted_output
-                     # Assign the date to a variable called current_date
-                    current_date = date
-                    # Assign the time to a variable called current_time
-                    current_time = time
-                    # System message
-                    system_message = f"{system_message}: {internet_output}. current date: {current_date}. current time: {current_time}."
-                else:
-                    # Print or return the response text to see what the response contains 
-                    print(ddg_response.text)
-                    # Return a message with 200 status code saying that the web scraping failed 
-                    return flask.jsonify({"message": "Web scraping failed. Please try again later."}), 200
-            # Create list of messages with the modified system_message as the first element and the user's query as the second element
-            messages = [
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": query}
-            ]
-            # Pass list of messages to g4f.ChatCompletion.create method with model as 'gpt-4' and provider as g4f.Provider.GetGpt
-            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.GptGo, messages=messages, flush=True)
-            # Return response as json object with 200 status code
-            return flask.make_response(response), 200
+system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}."
+
+    messages = [
+        {"role": "system", "content": system_message},
+        {"role": "user", "content": query}
+    ]
+    response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
+    return flask.make_response(response), 200
+
 @app.route('/transcript', methods=['GET'])
 @limiter.limit("10/minute;1500/day", key_func=lambda: request.args.get('id'))
 def transcript():
