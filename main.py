@@ -14,7 +14,7 @@ import os
 from duckduckgo_search import DDGS
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
-from youtubesearchpython import Video, ResultMode
+from youtubesearchpython import *
 # Import Flask-Limiter and PyMongo.
 from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
@@ -235,20 +235,16 @@ def transcript():
     print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
     transcript = YouTubeTranscriptApi.get_transcript(videoid)
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
-    video = Video.get('https://www.youtube.com/watch?v=z0GKGpObgPY', mode=ResultMode.json, get_upload_date=True) 
-
-title = video['title']
-secondsText = video['duration']['secondsText']
-viewCount = video['viewCount']['text']
-uploader = video['channel']['name']
-link = video['link'] 
-
-formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
-
+    video = Video.get(videoid, mode=ResultMode.json, get_upload_date=True)
     now = datetime.datetime.now()
     date = now.strftime("%A, %d %B, %Y")
     time = now.strftime("%I:%M:%S %p")
-
+    title = video['title']
+    secondsText = video['duration']['secondsText']
+    viewCount = video['viewCount']['text']
+    uploader = video['channel']['name']
+    link = video['link']
+    formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
     if internet == "on":
         with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
     for r in ddgs.text(query, max_results=50):
@@ -387,3 +383,17 @@ def delete_image(filepath, delay):
 # Run app on port 5000 (default)
 if __name__ == "__main__":
   app.run(host="0.0.0.0", port=3000)
+
+from youtubesearchpython import *
+
+video = Video.get('https://www.youtube.com/watch?v=z0GKGpObgPY', mode=ResultMode.json, get_upload_date=True)
+
+title = video['title']
+secondsText = video['duration']['secondsText']
+viewCount = video['viewCount']['text']
+uploader = video['channel']['name']
+link = video['link']
+
+formatted_data = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
+print(formatted_data)
+                  
