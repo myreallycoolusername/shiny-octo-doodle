@@ -372,17 +372,3 @@ def delete_image(filepath, delay):
 # Run app on port 5000 (default)
 if __name__ == "__main__":
   app.run(host="0.0.0.0", port=3000)
-
-from youtubesearchpython import *
-
-video = Video.get('https://www.youtube.com/watch?v=z0GKGpObgPY', mode=ResultMode.json, get_upload_date=True)
-
-title = video['title']
-secondsText = video['duration']['secondsText']
-viewCount = video['viewCount']['text']
-uploader = video['channel']['name']
-link = video['link']
-
-formatted_data = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
-print(formatted_data)
-                  
