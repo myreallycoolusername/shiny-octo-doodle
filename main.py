@@ -127,7 +127,7 @@ def api():
     banned_ids = os.getenv('BANNEDIDS')
     banned_ids = banned_ids.split(',')
     if id in banned_ids:
-        return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
+        return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     mode = args.get("mode")
     internet = args.get("internet")
     useragent = request.headers.get("user-agent")
@@ -208,7 +208,7 @@ def transcript():
     banned_ids = os.getenv('BANNEDIDS')
     banned_ids = banned_ids.split(',')
     if id in banned_ids:
-        return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
+        return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     query = request.args.get('query')
     internet = request.args.get('search')
     useragent = request.headers.get("user-agent")
@@ -283,7 +283,7 @@ async def generate():
     banned_ids = os.getenv('BANNEDIDS')
     banned_ids = banned_ids.split(',')
     if id in banned_ids:
-        return 'sorry but you are banned lol 🤨 what did you even do to get banned bruh?? 🤨🤨 anyway, do you want some cookies? 🍪🍪🍪'
+        return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     prompt = request.args.get('prompt')
     useragent = request.headers.get('user-agent')
     resp = await AsyncClient.create_generation("prodia", prompt)
