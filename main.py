@@ -62,10 +62,10 @@ executor = Executor(app)
 system_messages = {
     "cat": os.getenv('CAT_MODE'),
     "dog": os.getenv('DOG_MODE'),
-  "info": os.getenv('I_MODE'),
-  "normal": os.getenv('DEFAULT'),
-  "img": os.getenv('VID_MODE'),
-  "devmode": os.getenv('DEV_MODE')  
+    "info": os.getenv('I_MODE'),
+    "normal": os.getenv('DEFAULT'),
+    "img": os.getenv('VID_MODE'),
+    "devmode": os.getenv('DEV_MODE')  
 }
 
 # Create a MongoClient instance and connect to MongoDB database 
@@ -173,32 +173,32 @@ def api():
             # Format time as hour, minute and second 
             time = now.strftime("%I:%M:%S %p")
             # Check if internet parameter is set to on
-if internet == "on":
-    with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
-        for r in ddgs.text(query, max_results=50):
-            if type(r) == dict:
-                searches = [r]
-            else:
-                searches = r.json()
+            if internet == "on":
+                with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
+                    for r in ddgs.text(query, max_results=50):
+                        if type(r) == dict:
+                            searches = [r]
+                        else:
+                            searches = r.json()
+                
+                formatted_data = []
+                for item in searches:
+                    link = item["href"]
+                    snippet = item["body"]
+                    title = item["title"]
+                    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+                    formatted_data.append(formatted_string)
 
-formatted_data = []
-for item in searches:
-    link = item["href"]
-    snippet = item["body"]
-    title = item["title"]
-    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
-    formatted_data.append(formatted_string)
+                formatted_output = " ".join(formatted_data)
+                internet_output = formatted_output
+                system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}."
 
-formatted_output = " ".join(formatted_data)
-internet_output = formatted_output
-system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}."
-
-    messages = [
-        {"role": "system", "content": system_message},
-        {"role": "user", "content": query}
-    ]
-    response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
-    return flask.make_response(response), 200
+            messages = [
+                {"role": "system", "content": system_message},
+                {"role": "user", "content": query}
+            ]
+            response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
+            return flask.make_response(response), 200
 
 @app.route('/transcript', methods=['GET'])
 @limiter.limit("10/minute;1500/day", key_func=lambda: request.args.get('id'))
@@ -236,23 +236,23 @@ def transcript():
     formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
     if internet == "on":
         with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
-    for r in ddgs.text(query, max_results=50):
-        if type(r) == dict:
-            searches = [r]
-        else:
-            searches = r.json()
-        
-formatted_data = []
-for item in searches:
-    link = item["href"]
-    snippet = item["body"]
-    title = item["title"]
-    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
-    formatted_data.append(formatted_string)
+            for r in ddgs.text(query, max_results=50):
+                if type(r) == dict:
+                    searches = [r]
+                else:
+                    searches = r.json()
+                    
+        formatted_data = []
+        for item in searches:
+            link = item["href"]
+            snippet = item["body"]
+            title = item["title"]
+            formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+            formatted_data.append(formatted_string)
 
-formatted_output = " ".join(formatted_data)
-internet_output = formatted_output
-system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}. info of video: {formatted_vid_info}"
+        formatted_output = " ".join(formatted_data)
+        internet_output = formatted_output
+        system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}. info of video: {formatted_vid_info}"
 
     messages = [
         {"role": "system", "content": system_message},
@@ -260,6 +260,7 @@ system_message = f"{system_message}: {internet_output}. transcript of video: {fo
     ]
     response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
     return flask.make_response(response), 200
+
 # Default page
 @app.route('/')
 def home():
@@ -275,6 +276,7 @@ def home():
     # Print the visitor IP to console
     print(f"Visitor IP on homepage: {visitor_ip} with useragent: {useragent}")
     return render_template('homepage.html')
+
 # The /generate endpoint for generating images
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
@@ -320,49 +322,54 @@ async def generate():
 # Define a function to check the IP before each request
 @app.before_request
 def check_ip():
-  # Get the IP from the X-Forwarded-For header
-  ip = request.headers.get("X-Forwarded-For")
-  # If the header is None, get the IP from the X-Real-IP header
-  if ip is None:
-    ip = request.headers.get("X-Real-IP")
-  # If the IP is still None, get the IP from the request.remote_addr attribute
-  if ip is None:
-    ip = request.remote_addr
-  # Convert the IP address to IPv4Address or IPv6Address object
-  ip = ipaddress.ip_address(ip)
-  # Loop through the list of banned ranges
-  for range in ip_range:
-    # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
-    if ip in range:
-      print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
-      abort(403)
-  # Loop through the list of banned addresses
-  for address in ip_ban:
-    # If the IP address matches a banned address, abort the request with a 403 error and print the IP
-    if ip == address:
-      print(f"IP {ip} is banned from accessing the API but tried accessing the API")
-      abort(403)
+    # Get the IP from the X-Forwarded-For header
+    ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, get the IP from the X-Real-IP header
+    if ip is None:
+        ip = request.headers.get("X-Real-IP")
+    # If the IP is still None, get the IP from the request.remote_addr attribute
+    if ip is None:
+        ip = request.remote_addr
+    # Convert the IP address to IPv4Address or IPv6Address object
+    ip = ipaddress.ip_address(ip)
+    # Loop through the list of banned ranges
+    for range in ip_range:
+        # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
+        if ip in range:
+            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
+            abort(403)
+    # Loop through the list of banned addresses
+    for address in ip_ban:
+        # If the IP address matches a banned address, abort the request with a 403 error and print the IP
+        if ip == address:
+            print(f"IP {ip} is banned from accessing the API but tried accessing the API")
+            abort(403)
 
 @app.errorhandler(404)
 # inbuilt function which takes error as parameter
 def not_found(e):
-# defining function
-  return render_template('404.html'), 404
+    # defining function
+    return render_template('404.html'), 404
+
 @app.errorhandler(500)
 # inbuilt function which takes error as parameter
 def server_err(e):
-# defining function
-  return render_template('500.html'), 500
+    # defining function
+    return render_template('500.html'), 500
+
+
 @app.errorhandler(403)
 # inbuilt function which takes error as parameter
 def notallowed(e):
-# defining function
-  return render_template('403.html'), 403
+    # defining function
+    return render_template('403.html'), 403
+
+
 @app.errorhandler(429)
 # inbuilt function which takes error as parameter
 def limit(e):
-# defining function
-  return render_template('429.html'), 429
+    # defining function
+    return render_template('429.html'), 429
 
 def delete_image(filepath, delay):
     time.sleep(delay)
@@ -371,4 +378,4 @@ def delete_image(filepath, delay):
 
 # Run app on port 5000 (default)
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", port=3000)
+    app.run(host="0.0.0.0", port=3000)
