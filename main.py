@@ -11,7 +11,7 @@ from flask_executor import Executor
 import ipaddress
 import datetime
 import os
-from duckduckgo_search import DDGS
+from duckduckgo_search import AsyncDDGS
 from PIL import Image
 from youtube_transcript_api import YouTubeTranscriptApi
 from youtubesearchpython import *
@@ -20,6 +20,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 from io import BytesIO
+import asyncio
 from asyncio import run
 
 sentry_sdk.init(
@@ -174,7 +175,8 @@ def api():
             time = now.strftime("%I:%M:%S %p")
             # Check if internet parameter is set to on
             if internet == "on":
-                with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
+                async def search1():
+                async with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
                     for r in ddgs.text(query, max_results=50):
                         if type(r) == dict:
                             searches = [r]
@@ -200,6 +202,7 @@ def api():
             proxy=os.getenv('PROXY2'),
             response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
             return flask.make_response(response), 200
+            run(search1())
 
 @app.route('/transcript', methods=['GET'])
 @limiter.limit("10/minute;1500/day", key_func=lambda: request.args.get('id'))
@@ -236,7 +239,8 @@ def transcript():
     link = video['link']
     formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
     if internet == "on":
-        with DDGS(proxies=os.getenv('PROXY'), timeout=20) as ddgs:
+        async def search2():
+        with DDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
             for r in ddgs.text(query, max_results=50):
                 if type(r) == dict:
                     searches = [r]
@@ -262,6 +266,7 @@ def transcript():
     proxy=os.getenv('PROXY2'),
     response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
     return flask.make_response(response), 200
+    run(search2())
 
 # Default page
 @app.route('/')
