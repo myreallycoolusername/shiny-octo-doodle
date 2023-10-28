@@ -197,6 +197,7 @@ def api():
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": query}
             ]
+            proxy=os.getenv('PROXY2'),
             response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
             return flask.make_response(response), 200
 
@@ -258,6 +259,7 @@ def transcript():
         {"role": "system", "content": system_message},
         {"role": "user", "content": query}
     ]
+    proxy=os.getenv('PROXY2'),
     response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
     return flask.make_response(response), 200
 
