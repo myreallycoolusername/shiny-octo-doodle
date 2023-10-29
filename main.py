@@ -183,8 +183,9 @@ def api():
                             else:
                                 searches = r.json()
                                 #hey! you found me! ;)
+                searchesv = searches
                 formatted_data = []
-                for item in searches:
+                for item in searchesv:
                     link = item["href"]
                     snippet = item["body"]
                     title = item["title"]
@@ -247,8 +248,9 @@ def transcript():
                     else:
                         searches = r.json()
                         #awww cmon stop scrolling
+        searchesv = searches
         formatted_data = []
-        for item in searches:
+        for item in searchesv:
             link = item["href"]
             snippet = item["body"]
             title = item["title"]
