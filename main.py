@@ -240,13 +240,13 @@ def transcript():
     formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
     if internet == "on":
         async def search2():
-        with DDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-            for r in ddgs.text(query, max_results=50):
-                if type(r) == dict:
-                    searches = [r]
-                else:
-                    searches = r.json()
-                    
+            with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
+                for r in ddgs.text(query, max_results=50):
+                    if type(r) == dict:
+                        searches = [r]
+                    else:
+                        searches = r.json()
+                        #awww cmon stop scrolling
         formatted_data = []
         for item in searches:
             link = item["href"]
