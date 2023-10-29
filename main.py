@@ -176,13 +176,13 @@ def api():
             # Check if internet parameter is set to on
             if internet == "on":
                 async def search1():
-                async with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-                    for r in ddgs.text(query, max_results=50):
-                        if type(r) == dict:
-                            searches = [r]
-                        else:
-                            searches = r.json()
-                
+                    async with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
+                        for r in ddgs.text(query, max_results=50):
+                            if type(r) == dict:
+                                searches = [r]
+                            else:
+                                searches = r.json()
+                                #hey! you found me! ;)
                 formatted_data = []
                 for item in searches:
                     link = item["href"]
