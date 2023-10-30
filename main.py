@@ -8,6 +8,7 @@ import asgiref
 import uuid
 import sentry_sdk
 from flask_executor import Executor
+from pymongo import MongoClient
 import ipaddress
 import datetime
 import os
@@ -223,7 +224,7 @@ def transcript():
     try:
         transcript = YouTubeTranscriptApi.get_transcript(videoid)
     except TranscriptsDisabled:
-        print(f"Oops! Subtitles are disabled for this video. Video ID: {videoid}")
+        print(f"Oops! Subtitles are disabled for this video. Video ID: {videoid}, ip of user: {visitor_ip}")
         transcript = f"Transcript for YouTube video with Video ID {videoid} is unavailable."
     
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
