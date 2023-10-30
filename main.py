@@ -13,15 +13,8 @@ import datetime
 import os
 from duckduckgo_search import AsyncDDGS
 from PIL import Image
-from youtube_transcript_api import YouTubeTranscriptApi
+from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled
 from youtubesearchpython import *
-# Import Flask-Limiter and PyMongo.
-from flask_limiter import Limiter
-from flask_limiter.util import get_remote_address
-from pymongo import MongoClient
-from io import BytesIO
-import asyncio
-from asyncio import run
 
 sentry_sdk.init(
     dsn=os.getenv('SENTRYDSN'),
@@ -227,7 +220,12 @@ def transcript():
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
     print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
-    transcript = YouTubeTranscriptApi.get_transcript(videoid)
+    try:
+        transcript = YouTubeTranscriptApi.get_transcript(videoid)
+    except TranscriptsDisabled:
+        print(f"Oops! Subtitles are disabled for this video. Video ID: {videoid}")
+        transcript = f"Transcript for YouTube video with Video ID {videoid} is unavailable."
+    
     formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
     video = Video.get(videoid, mode=ResultMode.json, get_upload_date=True)
     now = datetime.datetime.now()
@@ -310,7 +308,6 @@ async def generate():
     # Print the visitor IP to console
     print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}")
 
-    
     # Generate a random string for the filename
     filename = f"{uuid.uuid4()}.png"
     
@@ -366,13 +363,11 @@ def server_err(e):
     # defining function
     return render_template('500.html'), 500
 
-
 @app.errorhandler(403)
 # inbuilt function which takes error as parameter
 def notallowed(e):
     # defining function
     return render_template('403.html'), 403
-
 
 @app.errorhandler(429)
 # inbuilt function which takes error as parameter
