@@ -383,6 +383,6 @@ def delete_image(filepath, delay):
     if os.path.exists(filepath):
         os.remove(filepath)
 
-# Run app on port 5000 (default)
+# Run app on port 3000
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
