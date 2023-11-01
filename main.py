@@ -117,6 +117,7 @@ def check_rate_limit(id):
 # Use limiter.limit decorator to apply rate limits to api function 
 @limiter.limit("10/minute;2000/day", key_func=lambda: request.args.get('id'))
 def api():
+    searches = []
     # Get query, id, mode and internet from url parameters using request.args dictionary 
     args = flask.request.args 
     query = args.get("msg")
@@ -204,6 +205,7 @@ def api():
 @app.route('/transcript', methods=['GET'])
 @limiter.limit("10/minute;1500/day", key_func=lambda: request.args.get('id'))
 def transcript():
+    searches = []
     videoid = request.args.get('videoid')
     id = request.args.get('id')
     banned_ids = os.getenv('BANNEDIDS')
