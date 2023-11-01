@@ -191,7 +191,7 @@ def api():
 
                 formatted_output = " ".join(formatted_data)
                 internet_output = formatted_output
-                system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}."
+                system_message = f"{system_message}: {internet_output}."
 
             messages = [
                 {"role": "system", "content": system_message},
