@@ -198,7 +198,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Liaobots, messages=messages)
             return flask.make_response(response), 200
             run(search1())
 
@@ -270,7 +270,7 @@ def transcript():
         {"role": "user", "content": query}
     ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model='h2ogpt-gm-oasst1-en-2048-open-llama-13b', provider=g4f.Provider.H2o, messages=messages)
+    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Liaobots, messages=messages)
     return flask.make_response(response), 200
     run(search2())
 
