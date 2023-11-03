@@ -206,6 +206,7 @@ def api():
 @limiter.limit("10/minute;1500/day", key_func=lambda: request.args.get('id'))
 def transcript():
     searches = []
+    system_message = []
     videoid = request.args.get('videoid')
     id = request.args.get('id')
     banned_ids = os.getenv('BANNEDIDS')
