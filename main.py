@@ -248,8 +248,8 @@ def transcript():
     formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
     wholesearchsys = f"{searchsys}. Transcript: {formatted_transcript}. Info of YouTube video: title of video: {title}, description: {descr}."
     messages1 = [
-        {"role": "system", "content": wholesearchsys},
-        {"role": "user", "content": query}
+        {"role": "system", "content": searchsys},
+        {"role": "user", "content": wholesearchsys}
     ]
     proxy=os.getenv('PROXY2'),
     thingtosearch = g4f.ChatCompletion.create(model='meta-llama/Llama-2-13b-chat-hf', provider=g4f.Provider.Llama2, messages=messages1)
