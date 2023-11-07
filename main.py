@@ -205,6 +205,7 @@ def api():
 @app.route('/transcript', methods=['GET'])
 @limiter.limit("10/minute;1500/day", key_func=lambda: request.args.get('id'))
 def transcript():
+    searchsys = os.getenv('SEARCHSYS')
     searches = []
     system_message = []
     videoid = request.args.get('videoid')
@@ -242,12 +243,20 @@ def transcript():
     secondsText = video['duration']['secondsText']
     viewCount = video['viewCount']['text']
     uploader = video['channel']['name']
+    descr = video['description']
     link = video['link']
     formatted_vid_info = f'info of requested YouTube video: title of video: {title}, the duration of the video in seconds: {secondsText}, view count of video: {viewCount}, uploader of video: {uploader}, link of video: {link}'
+    wholesearchsys = f"{searchsys}. Transcript: {formatted_transcript}. Info of YouTube video: title of video: {title}, description: {descr}."
+    messages1 = [
+        {"role": "system", "content": wholesearchsys},
+        {"role": "user", "content": query}
+    ]
+    proxy=os.getenv('PROXY2'),
+    thingtosearch = g4f.ChatCompletion.create(model='meta-llama/Llama-2-13b-chat-hf', provider=g4f.Provider.Llama2, messages=messages1)
     if internet == "on":
         async def search2():
             with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-                for r in ddgs.text(query, max_results=50):
+                for r in ddgs.text(thingtosearch, max_results=3000000):
                     if type(r) == dict:
                         searches = [r]
                     else:
