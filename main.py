@@ -377,7 +377,8 @@ def not_found(e):
 # inbuilt function which takes error as parameter
 def server_err(e):
     # defining function
-    return render_template('500.html'), 500
+    #return render_template('500.html'), 500
+    return "oops, the server crashed lol, don't worry, it's not your fault. must be those rats in the servers room."
 
 @app.errorhandler(403)
 # inbuilt function which takes error as parameter
@@ -389,7 +390,8 @@ def notallowed(e):
 # inbuilt function which takes error as parameter
 def limit(e):
     # defining function
-    return render_template('429.html'), 429
+    #return render_template('429.html'), 429
+    return "rate limit reached, try again later. wait, waittt, waitt... what did you even do to reach the rate limit?? 🤨🤨🤨🤨🤨🤨😳😳😳😳"
 
 def delete_image(filepath, delay):
     time.sleep(delay)
