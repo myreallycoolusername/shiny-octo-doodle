@@ -198,7 +198,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.GeekGpt, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Phind, messages=messages)
             return flask.make_response(response), 200
             run(search1())
 
@@ -280,7 +280,7 @@ def transcript():
         {"role": "user", "content": query}
     ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.GeekGpt, messages=messages)
+    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Phind, messages=messages)
     return flask.make_response(response), 200
     run(search2())
 
@@ -378,7 +378,7 @@ def not_found(e):
 def server_err(e):
     # defining function
     #return render_template('500.html'), 500
-    return "oops, the server crashed lol, don't worry, it's not your fault. must be those rats in the servers room."
+    return "oops, the server crashed lol, don't worry, it's not your fault. must be those rats in the servers room.", 200
 
 @app.errorhandler(403)
 # inbuilt function which takes error as parameter
@@ -391,7 +391,7 @@ def notallowed(e):
 def limit(e):
     # defining function
     #return render_template('429.html'), 429
-    return "rate limit reached, try again later. wait, waittt, waitt... what did you even do to reach the rate limit?? 🤨🤨🤨🤨🤨🤨😳😳😳😳"
+    return "rate limit reached, try again later. wait, waittt, waitt... what did you even do to reach the rate limit?? 🤨🤨🤨🤨🤨🤨😳😳😳😳", 200
 
 def delete_image(filepath, delay):
     time.sleep(delay)
