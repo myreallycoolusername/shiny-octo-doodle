@@ -198,7 +198,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.Yqcloud, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.Chatbase, messages=messages)
             return flask.make_response(response), 200
             run(search1())
 
@@ -280,7 +280,7 @@ def transcript():
         {"role": "user", "content": query}
     ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.Yqcloud, messages=messages)
+    response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.ChatBase, messages=messages)
     return flask.make_response(response), 200
     run(search2())
 
