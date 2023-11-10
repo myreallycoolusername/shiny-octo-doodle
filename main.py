@@ -198,7 +198,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Phind, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.ChatgptFree, messages=messages)
             return flask.make_response(response), 200
             run(search1())
 
@@ -252,7 +252,7 @@ def transcript():
         {"role": "user", "content": wholesearchsys}
     ]
     proxy=os.getenv('PROXY2'),
-    thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages1)
+    thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.DeepInfra, messages=messages1)
     if internet == "on":
         async def search2():
             with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
@@ -280,7 +280,7 @@ def transcript():
         {"role": "user", "content": query}
     ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.Phind, messages=messages)
+    response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.ChatgptFree, messages=messages)
     return flask.make_response(response), 200
     run(search2())
 
@@ -378,7 +378,7 @@ def not_found(e):
 def server_err(e):
     # defining function
     #return render_template('500.html'), 500
-    return "oops, the server crashed lol, don't worry, it's not your fault. must be those rats in the servers room.", 200
+    return "oops, the server crashed lol, don't worry, it's not your fault. must be those rats in the servers room. 🐀🐀🐀", 200
 
 @app.errorhandler(403)
 # inbuilt function which takes error as parameter
