@@ -378,7 +378,7 @@ def not_found(e):
 def server_err(e):
     # defining function
     #return render_template('500.html'), 500
-    return "oops, the server crashed lol, don't worry, it's not your fault. must be those rats in the servers room. 🐀🐀🐀", 200
+    return "oops, the server crashed lol, don't worry, it's not your fault. must be those rats in the servers room. 🐀🤬", 200
 
 @app.errorhandler(403)
 # inbuilt function which takes error as parameter
