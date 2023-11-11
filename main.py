@@ -115,7 +115,7 @@ def check_rate_limit(id):
 # Define route for api url
 @app.route("/chat")
 # Use limiter.limit decorator to apply rate limits to api function 
-@limiter.limit("10/minute;2000/day", key_func=lambda: request.args.get('id'))
+@limiter.limit("100/minute;14400/day", key_func=lambda: request.args.get('id'))
 def api():
     searches = []
     # Get query, id, mode and internet from url parameters using request.args dictionary 
@@ -203,7 +203,7 @@ def api():
             run(search1())
 
 @app.route('/transcript', methods=['GET'])
-@limiter.limit("10/minute;1500/day", key_func=lambda: request.args.get('id'))
+@limiter.limit("200/minute;28800/day", key_func=lambda: request.args.get('id'))
 def transcript():
     searchsys = os.getenv('SEARCHSYS')
     searches = []
@@ -301,8 +301,8 @@ def home():
     return render_template('homepage.html')
 
 # The /generate reserved endpoint for generating images
-@app.route('/secretimgen', methods=['GET'])
-@limiter.limit("-9999/minute;-9999/day", key_func=lambda: request.args.get('ign'))
+@app.route('/generate', methods=['GET'])
+@limiter.limit("200/minute;28800/day", key_func=lambda: request.args.get('ign'))
 async def generate():
     prompt = request.args.get('prompt')
     useragent = request.headers.get('user-agent')
@@ -379,8 +379,6 @@ async def genimgreserved():
     # Redirect the user to the URL of the saved image
     return redirect(url_for('static', filename=filename))
     run(genimgreserved())
-
-
 
 # Define a function to check the IP before each request
 @app.before_request
