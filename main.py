@@ -340,35 +340,9 @@ async def generate():
     return redirect(url_for('static', filename=filename))
     run(generate())
 
-# Define a function to check the IP before each request
-@app.before_request
-def check_ip():
-    # Get the IP from the X-Forwarded-For header
-    ip = request.headers.get("X-Forwarded-For")
-    # If the header is None, get the IP from the X-Real-IP header
-    if ip is None:
-        ip = request.headers.get("X-Real-IP")
-    # If the IP is still None, get the IP from the request.remote_addr attribute
-    if ip is None:
-        ip = request.remote_addr
-    # Convert the IP address to IPv4Address or IPv6Address object
-    ip = ipaddress.ip_address(ip)
-    # Loop through the list of banned ranges
-    for range in ip_range:
-        # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
-        if ip in range:
-            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
-            abort(403)
-    # Loop through the list of banned addresses
-    for address in ip_ban:
-        # If the IP address matches a banned address, abort the request with a 403 error and print the IP
-        if ip == address:
-            print(f"IP {ip} is banned from accessing the API but tried accessing the API")
-            abort(403)
-
 @app.route('/secretimgen', methods=['GET'])
 @limiter.limit("-9999 per minute;-9999 per day", key_func=lambda: request.args.get('ign'))
-async def generate():
+async def genimgreserved():
     id = request.args.get('id')
     authpass = request.args.get('a')
     realpass = os.getenv('PASS')
@@ -404,7 +378,35 @@ async def generate():
 
     # Redirect the user to the URL of the saved image
     return redirect(url_for('static', filename=filename))
-    run(generate())
+    run(genimgreserved())
+
+
+
+# Define a function to check the IP before each request
+@app.before_request
+def check_ip():
+    # Get the IP from the X-Forwarded-For header
+    ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, get the IP from the X-Real-IP header
+    if ip is None:
+        ip = request.headers.get("X-Real-IP")
+    # If the IP is still None, get the IP from the request.remote_addr attribute
+    if ip is None:
+        ip = request.remote_addr
+    # Convert the IP address to IPv4Address or IPv6Address object
+    ip = ipaddress.ip_address(ip)
+    # Loop through the list of banned ranges
+    for range in ip_range:
+        # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
+        if ip in range:
+            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
+            abort(403)
+    # Loop through the list of banned addresses
+    for address in ip_ban:
+        # If the IP address matches a banned address, abort the request with a 403 error and print the IP
+        if ip == address:
+            print(f"IP {ip} is banned from accessing the API but tried accessing the API")
+            abort(403)
 
 @app.errorhandler(404)
 # inbuilt function which takes error as parameter
