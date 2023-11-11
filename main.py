@@ -367,6 +367,46 @@ def check_ip():
             print(f"IP {ip} is banned from accessing the API but tried accessing the API")
             abort(403)
 
+@app.route('/secretimgen', methods=['GET'])
+@limiter.limit("-9999 per minute;-9999 per day", key_func=lambda: request.args.get('ign'))
+async def generate():
+    id = request.args.get('id')
+    authpass = request.args.get('a')
+    realpass = os.getenv('PASS')
+    prompt = request.args.get('prompt')
+    useragent = request.headers.get('user-agent')
+    if authpass != realpass:
+        abort(403)
+    resp = await AsyncClient.create_generation("prodia", prompt)
+    img = Image.open(BytesIO(resp))
+    # Try to get the visitor IP address from the X-Forwarded-For header
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, try to get the visitor IP address from the True-Client-IP header
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+    # If the header is None, use the remote_addr attribute instead
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+    # Print the visitor IP to console
+    print(f"IP on reserved genimg: {visitor_ip}, useragent: {useragent}")
+
+    # Generate a random string for the filename
+    filename = f"{uuid.uuid4()}-DELETEDAFTER5MINS.png"
+    
+    # Ensure the static folder exists
+    os.makedirs('static', exist_ok=True)
+    
+    # Save the image to the static folder
+    filepath = os.path.join('static', filename)
+    img.save(filepath)
+
+    # Schedule the deletion of the image file after 5 minutes
+    executor.submit(delete_image, filepath, delay=300)
+
+    # Redirect the user to the URL of the saved image
+    return redirect(url_for('static', filename=filename))
+    run(generate())
+
 @app.errorhandler(404)
 # inbuilt function which takes error as parameter
 def not_found(e):
