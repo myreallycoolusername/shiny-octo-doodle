@@ -300,16 +300,16 @@ def home():
     print(f"Visitor IP on homepage: {visitor_ip} with useragent: {useragent}")
     return render_template('homepage.html')
 
-# The /generate reserved endpoint for generating images
 @app.route('/generate', methods=['GET'])
-@limiter.limit("200/minute;28800/day", key_func=lambda: request.args.get('ign'))
+@limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
 async def generate():
+    id = request.args.get('id')
+    banned_ids = os.getenv('BANNEDIDS')
+    banned_ids = banned_ids.split(',')
+    if id in banned_ids:
+        return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     prompt = request.args.get('prompt')
     useragent = request.headers.get('user-agent')
-    authpass = request.args.get('a')
-    actualpass = os.getenv('PASS')
-    if authpass != actualpass:
-        abort(403)
     resp = await AsyncClient.create_generation("prodia", prompt)
     img = Image.open(BytesIO(resp))
     # Try to get the visitor IP address from the X-Forwarded-For header
@@ -321,10 +321,10 @@ async def generate():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"IP on reserved genimg: {visitor_ip}, useragent: {useragent}")
+    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}")
 
     # Generate a random string for the filename
-    filename = f"{uuid.uuid4()}-DELETEDAFTER5MINS-AIH-FLIP4A.png"
+    filename = f"{uuid.uuid4()}-DELETEDAFTER5MINS.png"
     
     # Ensure the static folder exists
     os.makedirs('static', exist_ok=True)
@@ -343,7 +343,6 @@ async def generate():
 @app.route('/secretimgen', methods=['GET'])
 @limiter.limit("-9999 per minute;-9999 per day", key_func=lambda: request.args.get('ign'))
 async def genimgreserved():
-    id = request.args.get('id')
     authpass = request.args.get('a')
     realpass = os.getenv('PASS')
     prompt = request.args.get('prompt')
