@@ -2,7 +2,7 @@
 g4f==0.1.8.0
 flask==2.2.5
 async-timeout==4.0.2
-requests==2.26.0
+requests==2.31.0
 Flask-Limiter==3.3.1
 pymongo==4.4.1
 js2py @ git+https://github.com/PiotrDabkowski/js2py.git
@@ -20,3 +20,4 @@ sentry_sdk[flask]
 werkzeug==2.3.6
 duckduckgo-search
 youtube-search-python
+numpy>=1.22.2 # not directly required, pinned by Snyk to avoid a vulnerability
