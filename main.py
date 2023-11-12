@@ -230,7 +230,7 @@ def transcript():
     print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
     try:
         transcript = YouTubeTranscriptApi.get_transcript(videoid)
-        formatted_transcript = ". ".join([f"{caption['start']}s, {caption['text']}" for caption in transcript])
+        formatted_transcript = ". ".join([f"{caption['text']}" for caption in transcript])
     except TranscriptsDisabled:
         print(f"Oops! Subtitles are disabled for this video. Video ID: {videoid}, ip of user: {visitor_ip}")
         transcript = f"Transcript for YouTube video with Video ID {videoid} is unavailable."
