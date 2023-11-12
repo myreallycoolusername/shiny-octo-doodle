@@ -253,7 +253,7 @@ def transcript():
         {"role": "user", "content": wholesearchsys}
     ]
     proxy=os.getenv('PROXY2'),
-    thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.You, messages=messages1)
+    thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.AItianhuSpace, messages=messages1)
     if internet == "on":
         async def search2():
             with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
