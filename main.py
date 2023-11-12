@@ -199,7 +199,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.Aichat, messages=messages)
+            response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.ChatgptFree, messages=messages)
             return flask.make_response(response), 200
             run(search1())
 
@@ -253,7 +253,7 @@ def transcript():
         {"role": "user", "content": wholesearchsys}
     ]
     proxy=os.getenv('PROXY2'),
-    thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.GptForLove, messages=messages1)
+    thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Aichat, messages=messages1)
     if internet == "on":
         async def search2():
             with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
@@ -281,7 +281,7 @@ def transcript():
         {"role": "user", "content": query}
     ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.Aichat, messages=messages)
+    response = g4f.ChatCompletion.create(model='gpt-3.5-turbo', provider=g4f.Provider.ChatgptFree, messages=messages)
     return flask.make_response(response), 200
     run(search2())
 
