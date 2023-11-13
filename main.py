@@ -274,7 +274,7 @@ def transcript():
 
         formatted_output = " ".join(formatted_data)
         internet_output = formatted_output
-        system_message = f"{system_message}: {internet_output}. transcript of video: {formatted_transcript}. info of video: {formatted_vid_info}"
+        system_message = f"{system_message}. Internet Search Results: {internet_output}. transcript of video: {formatted_transcript}. info of video: {formatted_vid_info}. Today's date is: {date}, the current time is: {time}."
 
     messages = [
         {"role": "system", "content": system_message},
