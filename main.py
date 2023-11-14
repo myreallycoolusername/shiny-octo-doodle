@@ -229,7 +229,7 @@ def transcript():
     # Print the visitor IP to console
     print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
     try:
-        transcript = YouTubeTranscriptApi.get_transcript(videoid)
+        transcript = YouTubeTranscriptApi.get_transcript(videoid, proxies={"socks5": os.getenv('PROXYTR')})
         formatted_transcript = ". ".join([f"{caption['text']}" for caption in transcript])
     except TranscriptsDisabled:
         print(f"Oops! Subtitles are disabled for this video. Video ID: {videoid}, ip of user: {visitor_ip}")
