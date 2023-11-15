@@ -202,7 +202,7 @@ def api():
                 {"token": os.getenv('HFCOOKIE')}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.g4f.Provider.HuggingChat, messages=messages, cookies=)
+            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.g4f.Provider.HuggingChat, messages=messages, cookies=cookiesauth)
             return flask.make_response(response), 200
             run(search1())
 
