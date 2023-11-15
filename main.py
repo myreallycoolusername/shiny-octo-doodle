@@ -198,8 +198,11 @@ def api():
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": query}
             ]
+            cookiesauth = [
+                {"token": os.getenv('HFCOOKIE')}
+            ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.g4f.Provider.GeekGpt, messages=messages)
+            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.g4f.Provider.HuggingChat, messages=messages, cookies=)
             return flask.make_response(response), 200
             run(search1())
 
@@ -280,8 +283,11 @@ def transcript():
         {"role": "system", "content": system_message},
         {"role": "user", "content": query}
     ]
+    cookiesauth = [
+        {"token": os.getenv('HFCOOKIE')}
+    ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model='gpt-4', provider=g4f.Provider.GeekGpt, messages=messages)
+    response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Huggingchat, messages=messages, cookies=cookiesauth)
     return flask.make_response(response), 200
     run(search2())
 
@@ -440,3 +446,6 @@ def delete_image(filepath, delay):
 # Run app on port 3000
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=3000)
+
+    cookies={"cookie_name": "value", "cookie_name2": "value2"},
+    auth=True
