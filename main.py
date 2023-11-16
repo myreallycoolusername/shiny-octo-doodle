@@ -446,7 +446,5 @@ def delete_image(filepath, delay):
 
 # Run app on port 3000
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=3000)
-
-    cookies={"cookie_name": "value", "cookie_name2": "value2"},
-    auth=True
+    serve(app, host="0.0.0.0", port=3000) # use prod (?)
+    #app.run(host="0.0.0.0", port=3000)
