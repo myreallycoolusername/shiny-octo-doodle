@@ -1,5 +1,6 @@
 g4f @ git+https://github.com/xtekky/gpt4free.git
 flask==2.2.5
+waitress
 async-timeout==4.0.2
 requests==2.31.0
 Flask-Limiter==3.3.1
