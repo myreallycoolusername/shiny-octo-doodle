@@ -199,11 +199,8 @@ def api():
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": query}
             ]
-            cookiesauth = [
-                {"token": os.getenv('HFCOOKIE')}
-            ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.g4f.Provider.HuggingChat, messages=messages, cookies=cookiesauth, auth=True)
+            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
             return flask.make_response(response), 200
             run(search1())
 
@@ -284,11 +281,8 @@ def transcript():
         {"role": "system", "content": system_message},
         {"role": "user", "content": query}
     ]
-    cookiesauth = [
-        {"token": os.getenv('HFCOOKIE')}
-    ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies=cookiesauth, auth=True)
+    response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
     return flask.make_response(response), 200
     run(search2())
 
@@ -329,7 +323,7 @@ async def generate():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}")
+    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}. prompt: {prompt}")
 
     # Generate a random string for the filename
     filename = f"{uuid.uuid4()}-DELETEDAFTER5MINS.png"
