@@ -140,7 +140,7 @@ def api():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"Visitor IP on /chat: {visitor_ip}, useragent: {useragent}")
+    print(f"Visitor IP on /chat: {visitor_ip}, useragent: {useragent}. Query: {query}")
     # Check rate limit for id
     if check_rate_limit(id):
         # Return message with 200 status code saying rate limit exceeded
@@ -231,13 +231,13 @@ def transcript():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
     # Print the visitor IP to console
-    print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}. useragent: {useragent}")
+    print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}, query: {query}. useragent: {useragent}")
     try:
         transcript = YouTubeTranscriptApi.get_transcript(videoid, proxies={"socks5": os.getenv('PROXYTR')})
         formatted_transcript = ". ".join([f"{caption['text']}" for caption in transcript])
     except TranscriptsDisabled:
         print(f"Oops! Subtitles are disabled for this video. Video ID: {videoid}, ip of user: {visitor_ip}")
-        transcript = f"Transcript for YouTube video with Video ID {videoid} is unavailable."
+        transcript = f"Sorry, transcript is unavailable."
         formatted_transcript = "Sorry, transcript of video is unavailable. Use title or description or both as information!"
     
     video = Video.get(videoid, mode=ResultMode.json, get_upload_date=True)
