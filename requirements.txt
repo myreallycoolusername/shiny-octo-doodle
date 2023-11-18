@@ -1,5 +1,5 @@
-#g4f @ git+https://github.com/xtekky/gpt4free.git
-g4f==0.1.8.2
+g4f @ git+https://github.com/xtekky/gpt4free.git
+#g4f==0.1.8.2
 flask==2.2.5
 waitress
 async-timeout==4.0.2
