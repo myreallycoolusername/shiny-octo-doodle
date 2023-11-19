@@ -119,6 +119,7 @@ def check_rate_limit(id):
 # Use limiter.limit decorator to apply rate limits to api function 
 @limiter.limit("100/minute;14400/day", key_func=lambda: request.args.get('id'))
 def api():
+    searchq = []
     searches = []
     # Get query, id, mode and internet from url parameters using request.args dictionary 
     args = flask.request.args 
@@ -176,7 +177,7 @@ def api():
             if internet == "on":
                 async def search1():
                     async with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-                        for r in ddgs.text(query, max_results=50):
+                        for r in ddgs.text(query, region='wt-wt', safesearch=on, max_results=500000000000000000000000000000):
                             if type(r) == dict:
                                 searches = [r]
                             else:
@@ -258,7 +259,7 @@ def transcript():
     if internet == "on":
         async def search2():
             with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-                for r in ddgs.text(thingtosearch, max_results=3000000):
+                for r in ddgs.text(thingtosearch, region='wt-wt', safesearch=on, max_results=300000000000000):
                     if type(r) == dict:
                         searches = [r]
                     else:
