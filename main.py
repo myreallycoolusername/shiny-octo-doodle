@@ -1,6 +1,5 @@
 # Import all necessary packages
 import g4f
-from g4f import Provider
 from freeGPT import AsyncClient
 import flask
 from waitress import serve
@@ -201,7 +200,7 @@ def api():
                 {"role": "user", "content": query}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
+            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
             return flask.make_response(response), 200
             run(search1())
 
