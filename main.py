@@ -313,8 +313,13 @@ async def generate():
         return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     prompt = request.args.get('prompt')
     useragent = request.headers.get('user-agent')
-    resp = await AsyncClient.create_generation("prodia", prompt)
-    img = Image.open(BytesIO(resp))
+    try:
+        resp = await AsyncClient.create_generation("prodia", prompt)
+        img = Image.open(BytesIO(resp))
+        except Exception as e:
+            print('/generate: endpoint crashed')
+            return f"we are very very very very very sowwy about this 😰😰😰😰😰 but our serwwers are not wurking 👉👈 maybe try again???? report to owner with this error: {e}"
+            #stop it 😭😭😭
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
@@ -352,8 +357,14 @@ async def genimgreserved():
     useragent = request.headers.get('user-agent')
     if authpass != realpass:
         abort(403)
-    resp = await AsyncClient.create_generation("prodia", prompt)
-    img = Image.open(BytesIO(resp))
+        #im angry 😡😡😡😡😡😡
+    try:
+        resp = await AsyncClient.create_generation("prodia", prompt)
+        img = Image.open(BytesIO(resp))
+        except Exception as e:
+            print(f"/secretimgen: error on endpoint, crashed. err: {e}")
+            return f"we are soooooooooooooooooooo sorry about this 😭😭😭😭 please forgive us for this1!1!1!1! report this error to owner of this api: {e}"
+            #ok im very very serious stop it now 😡
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
