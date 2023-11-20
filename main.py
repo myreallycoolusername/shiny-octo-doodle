@@ -316,10 +316,10 @@ async def generate():
     try:
         resp = await AsyncClient.create_generation("prodia", prompt)
         img = Image.open(BytesIO(resp))
-        except Exception as e:
-            print('/generate: endpoint crashed')
-            return f"we are very very very very very sowwy about this 😰😰😰😰😰 but our serwwers are not wurking 👉👈 maybe try again???? report to owner with this error: {e}"
-            #stop it 😭😭😭
+    except Exception as e:
+        print('/generate: endpoint crashed. err: {e}')
+        return f"we are very very very very very sowwy about this 😰😰😰😰😰 but our serwwers are not wurking 👉👈 maybe try again???? report to owner with this error: {e}"
+        #stop it 😭😭😭
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
@@ -361,10 +361,10 @@ async def genimgreserved():
     try:
         resp = await AsyncClient.create_generation("prodia", prompt)
         img = Image.open(BytesIO(resp))
-        except Exception as e:
-            print(f"/secretimgen: error on endpoint, crashed. err: {e}")
-            return f"we are soooooooooooooooooooo sorry about this 😭😭😭😭 please forgive us for this1!1!1!1! report this error to owner of this api: {e}"
-            #ok im very very serious stop it now 😡
+    except Exception as e:
+        print(f"/secretimgen: error on endpoint, crashed. err: {e}")
+        return f"we are soooooooooooooooooooo sorry about this 😭😭😭😭 please forgive us for this1!1!1!1! report this error to owner of this api: {e}"
+        #ok im very very serious stop it now 😡
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
@@ -444,7 +444,12 @@ def limit(e):
     # defining function
     #return render_template('429.html'), 429
     return "rate limit reached, try again later. wait, waittt, waitt... what did you even do to reach the rate limit?? 🤨🤨🤨🤨🤨🤨😳😳😳😳", 200
-
+@app.errorhandler(502)
+# inbuilt function which takes error as parameter
+def idklikewhatisthiserr(e):
+    # defining function
+    #return render_template('502.html'), 502
+    return "uhmmm, so uhh this error got triggered because uhmmm there is no content to give you lol. they tell me im insane for writing these", 200  
 def delete_image(filepath, delay):
     time.sleep(delay)
     if os.path.exists(filepath):
