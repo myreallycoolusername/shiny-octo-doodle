@@ -121,6 +121,7 @@ def check_rate_limit(id):
 def api():
     searchq = []
     searches = []
+    searchsysc = []
     # Get query, id, mode and internet from url parameters using request.args dictionary 
     args = flask.request.args 
     query = args.get("msg")
@@ -167,17 +168,27 @@ def api():
         else:
             # Get system message for mode from dictionary using get method with a default value 
             system_message = system_messages.get(mode, "normal")
+            # Make query's value equal to a variable
+            searchq = query
+            # Search engine system prompt variable
+            searchsysc = os.getenv('CHATSEARCHSYS')
             # Get current date and time using datetime module 
             now = datetime.datetime.now()
             # Format date as weekday, day, month and year 
             date = now.strftime("%A, %d %B, %Y")
             # Format time as hour, minute and second 
             time = now.strftime("%I:%M:%S %p")
+            messages = [
+                {"role": "system", "content": searchsysc},
+                {"role": "user", "content": query}
+            ]
+            proxy=os.getenv('PROXY3'),
+            searches = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages)
             # Check if internet parameter is set to on
             if internet == "on":
                 async def search1():
                     async with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-                        for r in ddgs.text(query, region='wt-wt', safesearch=on, max_results=500000000000000000000000000000):
+                        for r in ddgs.text(searches, region='wt-wt', safesearch=on, max_results=500000000000000000000000000000):
                             if type(r) == dict:
                                 searches = [r]
                             else:
