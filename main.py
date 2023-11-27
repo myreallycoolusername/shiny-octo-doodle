@@ -14,6 +14,8 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from pymongo import MongoClient
 import ipaddress
+from bs4 import BeautifulSoup
+import urllib.parse
 import datetime
 import os
 from duckduckgo_search import AsyncDDGS
@@ -79,6 +81,11 @@ limiter = Limiter(
     default_limits=["30/minute", "1/second"],
     strategy="fixed-window"
 )
+
+def fix_url(url):
+    if not urllib.parse.urlparse(url).scheme:
+        url = "https://" + url
+    return url
 
 # Define rate limit function
 def check_rate_limit(id):
@@ -358,6 +365,9 @@ async def generate():
     # Redirect the user to the URL of the saved image
     return redirect(url_for('static', filename=filename))
     run(generate())
+
+@app.route('/sumurl', methods=['GET'])
+
 
 @app.route('/secretimgen', methods=['GET'])
 @limiter.limit("-9999 per minute;-9999 per day", key_func=lambda: request.args.get('ign'))
