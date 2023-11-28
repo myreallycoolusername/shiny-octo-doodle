@@ -386,35 +386,35 @@ else:
     # Check if each parameter is present
     #id
     if not id:
-    err.append("Id parameter is required. ")
+        err.append("Id parameter is required. ")
     #query
     if not query:
-    err.append("Query parameter is required. ")
+        err.append("Query parameter is required. ")
     #url
     if not url:
-    err.append("Url parameter is required. ")
+        err.append("Url parameter is required. ")
     #end
     if len(err) > 0:
-    # Join the error lists
-    error_output = "".join(err)
-    return flask.make_response(flask.jsonify({"error": error_output}, 200)                         
-                               else:
-                                   proxy = {'socks5': os.getenv('PROXY1')}
-                                   response = requests.get(url, proxies=proxy)
-                                   soup = BeautifulSoup(response.content, 'html.parser')
-                                   links = soup.find_all('a')
-                                   paragraphs = soup.find_all('p')
-                                   text = soup.find_all('h2')
-                                   scrapetext = ' '.join([p.get_text() for p in paragraphs]) + '. ' + ' '.join([link.get('href') for link in links]) + '. ' + ', '.join([t.get_text('h2') for t in text.find_all('h2')] + '.')
-                                   messages = [
-                                       {"role": "system", "content": system_message},
-                                       {"role": "user", "content": query}
-                                   ]
-                                   proxy=os.getenv('PROXY3'),
-                                   thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages)
-                                   if internet == "on":
-                                       async def search3():
-                                           with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
+        # Join the error lists
+        error_output = "".join(err)
+        return flask.make_response(flask.jsonify({"error": error_output}, 200)
+                                   else:
+                                       proxy = {'socks5': os.getenv('PROXY1')}
+                                       response = requests.get(url, proxies=proxy)
+                                       soup = BeautifulSoup(response.content, 'html.parser')
+                                       links = soup.find_all('a')
+                                       paragraphs = soup.find_all('p')
+                                       text = soup.find_all('h2')
+                                       scrapetext = ' '.join([p.get_text() for p in paragraphs]) + '. ' + ' '.join([link.get('href') for link in links]) + '. ' + ', '.join([t.get_text('h2') for t in text('h2')] + '.')
+                                       messages = [
+                                           {"role": "system", "content": system_message},
+                                           {"role": "user", "content": query}
+                                       ]
+                                       proxy=os.getenv('PROXY3'),
+                                       thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages)
+                                       if internet == "on":
+                                           async def search3():
+                                               with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs
                                                for r in ddgs.text(thingtosearch, region='wt-wt', safesearch=on, max_results=300000000000000):
                                                    if type(r) == dict:
                                                        searches = [r]
