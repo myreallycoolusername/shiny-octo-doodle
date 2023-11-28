@@ -397,7 +397,7 @@ else:
     if len(err) > 0:
         # Join the error lists
         error_output = "".join(err)
-        return flask.make_response(flask.jsonify({"error": error_output}, 200)
+        return flask.make_response(flask.jsonify({"error": error_output}, 200))
                                    else:
                                        proxy = {'socks5': os.getenv('PROXY1')}
                                        response = requests.get(url, proxies=proxy)
