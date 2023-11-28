@@ -414,7 +414,7 @@ async def urlsum():
            thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages)
            if internet == "on":
                async def search3():
-                  with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs
+                  with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
                   for r in ddgs.text(thingtosearch, region='wt-wt', safesearch=on, max_results=300000000000000):
                       if type(r) == dict:
                           searches = [r]
