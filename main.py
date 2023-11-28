@@ -414,31 +414,31 @@ async def urlsum():
            thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages)
            if internet == "on":
                async def search3():
-                  with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-                  for r in ddgs.text(thingtosearch, region='wt-wt', safesearch=on, max_results=300000000000000):
-                      if type(r) == dict:
-                          searches = [r]
-                      else:
-                          searches = r.json()
-                          searchesv = searches
-                          formatted_data = []
-                          for item in searchesv:
-                              title = item["title"]
-                              link = item["href"]
-                              snippet = item["body"]
-                              formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
-                              formatted_data.append(formatted_string)
-                              formatted_output = " ".join(formatted_data)
-                              internet_output = formatted_output
-                              system_message = f"{system_message}. Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
-                              #ok thats it one more time and yk what happens
-           messages1 = [
-               {"role": "system", "content": system_message},
-               {"role": "user", "content": query}
-           ]
-           proxy=os.getenv('PROXY2'),
-           finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-           return flask.make_response(final_response)
+                   with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
+                       for r in ddgs.text(thingtosearch, region='wt-wt', safesearch=on, max_results=300000000000000):
+                           if type(r) == dict:
+                               searches = [r]
+                           else:
+                               searches = r.json()
+                               searchesv = searches
+                               formatted_data = []
+                               for item in searchesv:
+                                   title = item["title"]
+                                   link = item["href"]
+                                   snippet = item["body"]
+                                   formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+                                   formatted_data.append(formatted_string)
+                                   formatted_output = " ".join(formatted_data)
+                                   internet_output = formatted_output
+                                   system_message = f"{system_message}. Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
+                                   #ok thats it one more time and yk what happens
+               messages1 = [
+                   {"role": "system", "content": system_message},
+                   {"role": "user", "content": query}
+               ]
+               proxy=os.getenv('PROXY2'),
+               finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
+               return flask.make_response(finalresponse)
 
 
 @app.route('/secretimgen', methods=['GET'])
