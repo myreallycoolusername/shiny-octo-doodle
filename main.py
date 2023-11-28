@@ -377,28 +377,29 @@ async def urlsum():
     thingtosearch = []
     url = fix_url(request.args.get('url'))
     system_message = os.getenv('SEARCHSYS')
+
+if check_rate_limit(id):
+    return 'sorry you reached limit, try again later'
 else:
-# Make an empty list of err
-err = []
-# Check if each parameter is present
-#id
-if not id:
+    # Make an empty list of err
+    err = []
+    # Check if each parameter is present
+    #id
+    if not id:
     err.append("Id parameter is required. ")
     #query
-if not query:
+    if not query:
     err.append("Query parameter is required. ")
     #url
-if not url:
+    if not url:
     err.append("Url parameter is required. ")
     #end
-if len(err) > 0:
+    if len(err) > 0:
     # Join the error lists
     error_output = "".join(err)
-    return flask.make_response(flask.jsonify({"error": error_output}, 200)
+    return flask.make_response(flask.jsonify({"error": error_output}, 200)                         
                                else:
-                                   proxy = {
-                                       'socks5': os.getenv('PROXY1')
-                                   }
+                                   proxy = {'socks5': os.getenv('PROXY1')}
                                    response = requests.get(url, proxies=proxy)
                                    soup = BeautifulSoup(response.content, 'html.parser')
                                    links = soup.find_all('a')
@@ -419,19 +420,18 @@ if len(err) > 0:
                                                        searches = [r]
                                                    else:
                                                        searches = r.json()
-                                                       #😤😤😤😤 stop!
-searchesv = searches
-formatted_data = []
-for item in searchesv:
-    title = item["title"]
-    link = item["href"]
-    snippet = item["body"]
-    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
-    formatted_data.append(formatted_string)
-    formatted_output = " ".join(formatted_data)
-    internet_output = formatted_output
-    system_message = f"{system_message}. Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
-    #ok thats it one more time and yk what happens
+                                                       searchesv = searches
+                                                       formatted_data = []
+                                                       for item in searchesv:
+                                                           title = item["title"]
+                                                           link = item["href"]
+                                                           snippet = item["body"]
+                                                           formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+                                                           formatted_data.append(formatted_string)
+                                                           formatted_output = " ".join(formatted_data)
+                                                           internet_output = formatted_output
+                                                           system_message = f"{system_message}. Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
+                                                           #ok thats it one more time and yk what happens
 messages1 = [
     {"role": "system", "content": system_message},
     {"role": "user", "content": query}
