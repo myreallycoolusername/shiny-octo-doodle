@@ -57,6 +57,10 @@ ip_ban = set(ip_ban.split(","))
 # Strip any whitespace from the IP addresses
 ip_ban = [ip.strip() for ip in ip_ban]
 
+# Get banned IDS
+banned_ids = os.getenv('BANNEDIDS')
+banned_ids = banned_ids.split(',')
+
 executor = Executor(app)
 
 # Define system messages for each mode
@@ -66,7 +70,8 @@ system_messages = {
     "info": os.getenv('I_MODE'),
     "normal": os.getenv('DEFAULT'),
     "img": os.getenv('VID_MODE'),
-    "devmode": os.getenv('DEV_MODE')  
+    "devmode": os.getenv('DEV_MODE'),
+    "search": os.getenv('SEARCHSYS')
 }
 
 # Create a MongoClient instance and connect to MongoDB database 
@@ -133,8 +138,6 @@ async def chat():
     args = flask.request.args 
     query = args.get("msg")
     id = args.get("id")
-    banned_ids = os.getenv('BANNEDIDS')
-    banned_ids = banned_ids.split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     mode = args.get("mode")
@@ -226,13 +229,11 @@ async def chat():
 @app.route('/transcript', methods=['GET'])
 @limiter.limit("200/minute;28800/day", key_func=lambda: request.args.get('id'))
 async def transcript():
-    searchsys = os.getenv('SEARCHSYS')
+    searchsys = system_messages.get("search")
     searches = []
     system_message = []
     videoid = request.args.get('videoid')
     id = request.args.get('id')
-    banned_ids = os.getenv('BANNEDIDS')
-    banned_ids = banned_ids.split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     query = request.args.get('query')
@@ -325,8 +326,6 @@ def home():
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
 async def generate():
     id = request.args.get('id')
-    banned_ids = os.getenv('BANNEDIDS')
-    banned_ids = banned_ids.split(',')
     if id in banned_ids:
         return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     prompt = request.args.get('prompt')
@@ -367,78 +366,80 @@ async def generate():
     run(generate())
 
 @app.route('/sumurl', methods=['GET'])
-@limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
+@limiter.limit("30 per minute;90000 per day", key_func=lambda: request.args.get('id'))
 async def urlsum():
-   id = request.args.get('id')
-   internet = request.args.get('internet')
-   query = request.args.get('msg')
-   useragent = request.headers.get('user-agent')
-   searches = []
-   thingtosearch = []
-   url = fix_url(request.args.get('url'))
-   system_message = os.getenv('SEARCHSYS')
+  id = request.args.get('id')
+  if id in banned_ids:
+      return 'sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? '
+  internet = request.args.get('internet')
+  query = request.args.get('msg')
+  useragent = request.headers.get('user-agent')
+  searches = []
+  thingtosearch = []
+  url = fix_url(request.args.get('url'))
+  system_message = system_messages.get("search")
 
-   if check_rate_limit(id):
-       return 'sorry you reached limit, try again later'
-   else:
-       # Make an empty list of err
-       err = []
-       # Check if each parameter is present
-       #id
-       if not id:
-           err.append("Id parameter is required. ")
-       #query
-       if not query:
-           err.append("Query parameter is required. ")
-       #url
-       if not url:
-           err.append("Url parameter is required. ")
-       #end
-       if len(err) > 0:
-           # Join the error lists
-           error_output = "".join(err)
-           return flask.make_response(flask.jsonify({"error": error_output}, 200))
-       else:
-           proxy = {'socks5': os.getenv('PROXY1')}
-           response = requests.get(url, proxies=proxy)
-           soup = BeautifulSoup(response.content, 'html.parser')
-           links = soup.find_all('a')
-           paragraphs = soup.find_all('p')
-           text = soup.find_all('h2')
-           scrapetext = ' '.join([p.get_text() for p in paragraphs]) + '. ' + ' '.join([link.get('href') for link in links]) + '. ' + ', '.join([t.get_text('h2') for t in text('h2')] + '.')
-           messages = [
-               {"role": "system", "content": system_message},
-               {"role": "user", "content": query}
-           ]
-           proxy=os.getenv('PROXY3'),
-           thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages)
-           if internet == "on":
-               async def search3():
-                   with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
-                       for r in ddgs.text(thingtosearch, region='wt-wt', safesearch=on, max_results=300000000000000):
-                           if type(r) == dict:
-                               searches = [r]
-                           else:
-                               searches = r.json()
-                               searchesv = searches
-                               formatted_data = []
-                               for item in searchesv:
-                                   title = item["title"]
-                                   link = item["href"]
-                                   snippet = item["body"]
-                                   formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
-                                   formatted_data.append(formatted_string)
-                                   formatted_output = " ".join(formatted_data)
-                                   internet_output = formatted_output
-                                   system_message = f"{system_message}. Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
-                                   #ok thats it one more time and yk what happens
-               messages1 = [
-                   {"role": "system", "content": system_message},
-                   {"role": "user", "content": query}
-               ]
-               proxy=os.getenv('PROXY2'),
-               finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-               return flask.make_response(finalresponse)
+  if check_rate_limit(id):
+      return 'sorry you reached limit, try again later'
+  else:
+      # Make an empty list of err
+      err = []
+      # Check if each parameter is present
+      #id
+      if not id:
+          err.append("Id parameter is required. ")
+      #query
+      if not query:
+          err.append("Query parameter is required. ")
+      #url
+      if not url:
+          err.append("Url parameter is required. ")
+      #end
+      if len(err) > 0:
+          # Join the error lists
+          error_output = "".join(err)
+          return flask.make_response(flask.jsonify({"error": error_output}, 200))
+      else:
+          proxy = {'socks5': os.getenv('PROXY1')}
+          response = requests.get(url, proxies=proxy)
+          soup = BeautifulSoup(response.content, 'html.parser')
+          links = soup.find_all('a')
+          paragraphs = soup.find_all('p')
+          text = soup.find_all('h2')
+          scrapetext = ' '.join([p.get_text() for p in paragraphs]) + '. ' + ' '.join([link.get('href') for link in links]) + '. ' + ', '.join([t.get_text('h2') for t in text('h2')] + '.')
+          messages = [
+              {"role": "system", "content": system_message},
+              {"role": "user", "content": query}
+          ]
+          proxy=os.getenv('PROXY3'),
+          thingtosearch = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Llama2, messages=messages)
+          if internet == "on":
+              async def search3():
+                 with AsyncDDGS(proxies=os.getenv('PROXY'), timeout=120) as ddgs:
+                     for r in ddgs.text(thingtosearch, region='wt-wt', safesearch=on, max_results=300000000000000):
+                         if type(r) == dict:
+                             searches = [r]
+                         else:
+                             searches = r.json()
+                             searchesv = searches
+                             formatted_data = []
+                             for item in searchesv:
+                                title = item["title"]
+                                link = item["href"]
+                                snippet = item["body"]
+                                formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+                                formatted_data.append(formatted_string)
+                                formatted_output = " ".join(formatted_data)
+                                internet_output = formatted_output
+                                system_message = f"{system_message}. Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
+                                #ok thats it one more time and yk what happens
+              messages1 = [
+                 {"role": "system", "content": system_message},
+                 {"role": "user", "content": query}
+              ]
+              proxy=os.getenv('PROXY2'),
+              finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
+              return flask.make_response(finalresponse)
 
 
 @app.route('/secretimgen', methods=['GET'])
