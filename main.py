@@ -403,12 +403,12 @@ async def urlsum():
           # Try to get the visitor IP address from the X-Forwarded-For header
           visitor_ip = request.headers.get("X-Forwarded-For")
           # If the header is None, try to get the visitor IP address from the True-Client-IP header
-      if visitor_ip is None:
-        visitor_ip = request.headers.get("True-Client-IP")
-          # If the header is None, use the remote_addr attribute instead
           if visitor_ip is None:
-              visitor_ip = request.remote_addr
-              # please stop😰😰
+              visitor_ip = request.headers.get("True-Client-IP")
+              # If the header is None, use the remote_addr attribute instead
+              if visitor_ip is None:
+                  visitor_ip = request.remote_addr
+                  # please stop😰😰
           print(f"Visitor IP on /sumurl: {visitor_ip}. ID: {id}, query: {query}.")
           proxy = {'socks5': os.getenv('PROXY1')}
           response = requests.get(url, proxies=proxy)
