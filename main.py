@@ -452,7 +452,7 @@ async def urlsum():
                  {"role": "user", "content": query}
               ]
               proxy=os.getenv('PROXY2'),
-              finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.ChatgptAi, messages=messages) #, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
+              finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.FakeGpt, messages=messages) #, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
               return flask.make_response(finalresponse)
 
 
