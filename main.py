@@ -71,7 +71,9 @@ system_messages = {
     "normal": os.getenv('DEFAULT'),
     "img": os.getenv('VID_MODE'),
     "devmode": os.getenv('DEV_MODE'),
-    "search": os.getenv('SEARCHSYS')
+    "search": os.getenv('SEARCHSYS'),
+    "searchchat": os.getenv('SEARCHCHATSYS'),
+    "sumsys": os.getenv('SUMSYS')
 }
 
 # Create a MongoClient instance and connect to MongoDB database 
@@ -180,6 +182,8 @@ async def chat():
             system_message = system_messages.get(mode, "normal")
             # Make query's value equal to a variable
             searchq = query
+            # Get system message for searching
+            searchsysc = system_messages.get("searchchat")
             # Search engine system prompt variable
             searchsysc = os.getenv('CHATSEARCHSYS')
             # Get current date and time using datetime module 
@@ -377,7 +381,7 @@ async def urlsum():
   searches = []
   thingtosearch = []
   url = fix_url(request.args.get('url'))
-  system_message = system_messages.get("search")
+  system_message = system_messages.get("sumsys")
 
   if check_rate_limit(id):
       return 'sorry you reached limit, try again later'
