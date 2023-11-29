@@ -445,7 +445,7 @@ async def urlsum():
                                 formatted_data.append(formatted_string)
                                 formatted_output = " ".join(formatted_data)
                                 internet_output = formatted_output
-                                system_message = f"{system_message}. Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
+                                system_message = f"{system_message}. THINGS REQUIRED TO MAKE ANSWER: Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
                                 #ok thats it one more time and yk what happens
               messages1 = [
                  {"role": "system", "content": system_message},
