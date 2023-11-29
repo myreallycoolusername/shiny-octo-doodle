@@ -226,7 +226,7 @@ async def chat():
                 {"role": "user", "content": query}
             ]
             proxy=os.getenv('PROXY2'),
-            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.FakeGpt, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
+            response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
             return flask.make_response(response), 200
             run(search1())
 
@@ -306,7 +306,7 @@ async def transcript():
         {"role": "user", "content": query}
     ]
     proxy=os.getenv('PROXY2'),
-    response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.FakeGpt, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
+    response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Huggingchat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
     return flask.make_response(response), 200
     run(search2())
 
@@ -452,7 +452,7 @@ async def urlsum():
                  {"role": "user", "content": query}
               ]
               proxy=os.getenv('PROXY2'),
-              finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.FreeGpt, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
+              finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Hashnode, messages=messages) #, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
               return flask.make_response(finalresponse)
 
 
