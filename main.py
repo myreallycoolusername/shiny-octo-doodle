@@ -400,13 +400,23 @@ async def urlsum():
           error_output = "".join(err)
           return flask.make_response(flask.jsonify({"error": error_output}, 200))
       else:
+          # Try to get the visitor IP address from the X-Forwarded-For header
+          visitor_ip = request.headers.get("X-Forwarded-For")
+          # If the header is None, try to get the visitor IP address from the True-Client-IP header
+      if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+          # If the header is None, use the remote_addr attribute instea
+          if visitor_ip is None:
+              visitor_ip = request.remote_addr
+              # please stop😰😰
+          print(f"Visitor IP on /sumurl: {visitor_ip}. ID: {id}, query: {query}.")
           proxy = {'socks5': os.getenv('PROXY1')}
           response = requests.get(url, proxies=proxy)
           soup = BeautifulSoup(response.content, 'html.parser')
           links = soup.find_all('a')
           paragraphs = soup.find_all('p')
           text = soup.find_all('h2')
-          scrapetext = ' '.join([p.get_text() for p in paragraphs]) + '. ' + ' '.join([link.get('href') for link in links]) + '. ' + ', '.join([t.get_text('h2') for t in text('h2')] + '.')
+          scrapetext = ' '.join([p.get_text() for p in paragraphs]) + '. ' + ' '.join([link.get('href') for link in links]) + '. ' + ', '.join([t.get_text() for t in text]) + '.'
           messages = [
               {"role": "system", "content": system_message},
               {"role": "user", "content": query}
@@ -553,3 +563,15 @@ def delete_image(filepath, delay):
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=3000) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
+
+
+# Try to get the visitor IP address from the X-Forwarded-For header
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, try to get the visitor IP address from the True-Client-IP header
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+    # If the header is None, use the remote_addr attribute instead
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+    # Print the visitor IP to console
+    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}. prompt: {prompt}")
