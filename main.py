@@ -446,7 +446,7 @@ async def urlsum():
                                 formatted_output = " ".join(formatted_data)
                                 internet_output = formatted_output
                                 system_message = f"{system_message}. THINGS REQUIRED TO MAKE ANSWER: Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
-                                query = f"{query}. I am referring to the website (only website content) in the system message."
+                                query = f"{query}. I am referring to the website (only website content) in the system message. Title: None, URL: {url}."
                                 #ok thats it one more time and yk what happens
               messages1 = [
                  {"role": "system", "content": system_message},
