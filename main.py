@@ -445,8 +445,8 @@ async def urlsum():
                                 formatted_data.append(formatted_string)
                                 formatted_output = " ".join(formatted_data)
                                 internet_output = formatted_output
-                                system_message = f"{system_message}. Please only summarise the website. THINGS REQUIRED TO MAKE ANSWER: Internet Search Results: {internet_output}. Contents from website: {scrapetext}. Today's date is: {date}, the current time is: {time}."
-                                query = f"{query}. I am referring to the website (only website content) in the system message. Website info (the one im on right now): Title: None, URL: {url}."
+                                system_message = f"{system_message} Internet Search Results: {internet_output}. Text: {scrapetext}. Today's date is: {date}, the current time is: {time}."
+                                #query = f"{query}. I am referring to the website (only website content) in the system message. Website info (the one im on right now): Title: None, URL: {url}."
                                 #ok thats it one more time and yk what happens
               messages1 = [
                  {"role": "system", "content": system_message},
@@ -568,15 +568,3 @@ def delete_image(filepath, delay):
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=3000) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
-
-
-# Try to get the visitor IP address from the X-Forwarded-For header
-    visitor_ip = request.headers.get("X-Forwarded-For")
-    # If the header is None, try to get the visitor IP address from the True-Client-IP header
-    if visitor_ip is None:
-        visitor_ip = request.headers.get("True-Client-IP")
-    # If the header is None, use the remote_addr attribute instead
-    if visitor_ip is None:
-        visitor_ip = request.remote_addr
-    # Print the visitor IP to console
-    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}. prompt: {prompt}")
