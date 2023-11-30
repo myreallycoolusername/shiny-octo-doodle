@@ -61,6 +61,9 @@ ip_ban = [ip.strip() for ip in ip_ban]
 banned_ids = os.getenv('BANNEDIDS')
 banned_ids = banned_ids.split(',')
 
+# Enable logging for g4f
+g4f.debug.logging = True
+
 executor = Executor(app)
 
 # Define system messages for each mode
