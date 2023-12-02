@@ -234,8 +234,8 @@ async def chat():
             ]
             proxy=os.getenv('PROXY2'),
             response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-            return make_response(response), 200
-            # return jsonify({'answer': response}), 200
+            #return make_response(response), 200
+            return jsonify({'answer': response}), 200
             run(search1())
 
 @app.route('/transcript', methods=['GET'])
@@ -320,8 +320,8 @@ async def transcript():
     ]
     proxy=os.getenv('PROXY2'),
     response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Huggingchat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-    return make_response(response), 200
-    #return jsonify({'answer': response}), 200
+    #return make_response(response), 200
+    return jsonify({'answer': response}), 200
     run(search2())
 
 # Default page
@@ -477,8 +477,8 @@ async def urlsum():
               ]
               proxy=os.getenv('PROXY2'),
               finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.OnlineGpt, messages=messages) #, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-              return make_response(finalresponse), 200
-              #return jsonify({'answer': sum_of_urls}), 200
+              #return make_response(finalresponse), 200
+              return jsonify({'answer': finalresponse}), 200
 
 
 @app.route('/secretimgen', methods=['GET'])
