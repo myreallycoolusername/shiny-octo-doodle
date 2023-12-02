@@ -1,5 +1,6 @@
 # Import all necessary packages
 import g4f
+import socket
 from freeGPT import AsyncClient
 import flask
 from waitress import serve
@@ -137,6 +138,7 @@ def check_rate_limit(id):
 @limiter.limit("100/minute;14400/day", key_func=lambda: request.args.get('id'))
 async def chat():
     searchq = []
+    messages = []
     searches = []
     searchsysc = []
     # Get query, id, mode and internet from url parameters using request.args dictionary 
@@ -156,8 +158,10 @@ async def chat():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
+    # Get DNS of User for analytics purposes
+    dns = socket.gethostbyaddr(visitor_ip)[0]
     # Print the visitor IP to console
-    print(f"Visitor IP on /chat: {visitor_ip}, useragent: {useragent}. Query: {query}")
+    print(f"Visitor IP on /chat: {visitor_ip} (dns: {dns}), useragent: {useragent}. Query: {query}")
     # Check rate limit for id
     if check_rate_limit(id):
         # Return message with 200 status code saying rate limit exceeded
@@ -238,6 +242,8 @@ async def chat():
 async def transcript():
     searchsys = system_messages.get("search")
     searches = []
+    messages1 = []
+    messages = []
     system_message = []
     videoid = request.args.get('videoid')
     id = request.args.get('id')
@@ -254,8 +260,11 @@ async def transcript():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
+        #😠😠😠
+    # Get DNS of user for analytics purposes
+    dns = socket.gethostbyaddr(visitor_ip)[0]
     # Print the visitor IP to console
-    print(f"/transcript: id: {id} with ip {visitor_ip} requested a query about a YouTube video with video id {videoid}, query: {query}. useragent: {useragent}")
+    print(f"/transcript: id: {id} with ip {visitor_ip} (dns: {dns}) requested a query about a YouTube video with video id {videoid}, query: {query}. useragent: {useragent}")
     try:
         transcript = YouTubeTranscriptApi.get_transcript(videoid, proxies={"socks5": os.getenv('PROXYTR')})
         formatted_transcript = ". ".join([f"{caption['text']}" for caption in transcript])
@@ -325,8 +334,11 @@ def home():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
+        #😠😠😠😠😠😰😰😰😰😰😰
+    # Get DNS of user for analytics purposes
+    dns = socket.gethostbyaddr(visitor_ip)[0]
     # Print the visitor IP to console
-    print(f"Visitor IP on homepage: {visitor_ip} with useragent: {useragent}")
+    print(f"Visitor IP on homepage: {visitor_ip} (dns: {dns}) with useragent: {useragent}")
     return render_template('homepage.html')
 
 @app.route('/generate', methods=['GET'])
@@ -352,8 +364,10 @@ async def generate():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
+    # Get DNS of user for analytics purposes
+    dns = socket.gethostbyaddr(visitor_ip)[0]
     # Print the visitor IP to console
-    print(f"Visitor IP on /generate: {visitor_ip} and ID {id}, useragent: {useragent}. prompt: {prompt}")
+    print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
 
     # Generate a random string for the filename
     filename = f"{uuid.uuid4()}-DELETEDAFTER5MINS.png"
@@ -383,6 +397,7 @@ async def urlsum():
   useragent = request.headers.get('user-agent')
   searches = []
   thingtosearch = []
+  messages = []
   url = fix_url(request.args.get('url'))
   system_message = system_messages.get("sumsys")
 
@@ -485,6 +500,8 @@ async def genimgreserved():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
+    # Get DNS of User for analytics purposes
+    dns = socket.gethostbyaddr(visitor_ip)[0]
     # Print the visitor IP to console
     print(f"IP on reserved genimg: {visitor_ip}, useragent: {useragent}")
 
