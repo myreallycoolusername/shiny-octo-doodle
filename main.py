@@ -463,6 +463,9 @@ async def urlsum():
                                 formatted_data.append(formatted_string)
                                 formatted_output = " ".join(formatted_data)
                                 internet_output = formatted_output
+                                if internet_output is None:
+                                    internet_output = "Internet disabled."
+                                    #😠😠
                                 system_message = f"{system_message} Text:{scrapetext}. Internet Search Results: {internet_output}. Today's date is: {date}, the current time is: {time}."
                                 #query = f"{query}. I am referring to the website (only website content) in the system message. Website info (the one im on right now): Title: None, URL: {url}."
                                 #ok thats it one more time and yk what happens
