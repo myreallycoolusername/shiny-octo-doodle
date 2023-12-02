@@ -4,7 +4,7 @@ import socket
 from freeGPT import AsyncClient
 import flask
 from waitress import serve
-from flask import Flask, request, send_file, render_template, abort, url_for, redirect
+from flask import Flask, request, send_file, render_template, abort, url_for, redirect, make_response
 import requests
 import asgiref
 from io import BytesIO
@@ -234,7 +234,7 @@ async def chat():
             ]
             proxy=os.getenv('PROXY2'),
             response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.HuggingChat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-            return flask.make_response(response), 200
+            return make_response(response), 200
             run(search1())
 
 @app.route('/transcript', methods=['GET'])
@@ -319,7 +319,7 @@ async def transcript():
     ]
     proxy=os.getenv('PROXY2'),
     response = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.Huggingchat, messages=messages, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-    return flask.make_response(response), 200
+    return make_response(response), 200
     run(search2())
 
 # Default page
@@ -475,7 +475,7 @@ async def urlsum():
               ]
               proxy=os.getenv('PROXY2'),
               finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.OnlineGpt, messages=messages) #, cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-              return flask.make_response(finalresponse)
+              return make_response(finalresponse), 200
 
 
 @app.route('/secretimgen', methods=['GET'])
