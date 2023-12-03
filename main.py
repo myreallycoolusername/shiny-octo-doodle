@@ -68,7 +68,7 @@ banned_ids = banned_ids.split(',')
 g4f.debug.logging = True
 
 # Load necessary things for Bard (TTS)
-bardtoken = os.getenv('BARDTOKEN')
+bardtoken = os.getenv('BARDCOOKIE')
 bard = Bard(token=bardtoken)
 
 executor = Executor(app)
@@ -487,11 +487,27 @@ async def urlsum():
               return jsonify({'answer': finalresponse}), 200
 
 @app.route('/tts', methods=['GET'])
+@limiter.limit("30 per minute;90000 per day", key_func=lambda: request.args.get('id'))
 def tts():
     text = request.args.get('input')
+    id = request.args.get('id')
     if text is None:
         text = "No text provided"
-
+        # No, stop it. Get some help.
+    # Try to get the IP from X-Forwarded-For
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If visitor_ip is none, then get the IP from X-Real-IP
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("X-Real-IP")
+    # If visitor_ip is none, then get the IP from True-Client-IP
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+        # If visitor_ip is none, then get the IP from remote_addr
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+        # Nothing more to get IP from, but nees to get DNS (not IP)
+    dns = socket.gethostbyaddr(visitor_ip)[0]
+    print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
     audio = bard.speech(text)
     directory = 'static'
     if not os.path.exists(directory):
@@ -536,6 +552,10 @@ async def genimgreserved():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
+        # If visitor_ip is None, get the IP from X-Real_IP
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("X-Real-IP")
+        #Nothing more.
     # Get DNS of User for analytics purposes
     dns = socket.gethostbyaddr(visitor_ip)[0]
     # Print the visitor IP to console
@@ -571,17 +591,19 @@ def check_ip():
         ip = request.remote_addr
     # Convert the IP address to IPv4Address or IPv6Address object
     ip = ipaddress.ip_address(ip)
+    # Get the DNS from IP
+    dns = socket.gethostbyaddr(ip)[0]
     # Loop through the list of banned ranges
     for range in ip_range:
         # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
         if ip in range:
-            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
+            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API (dns: {dns})")
             abort(403)
     # Loop through the list of banned addresses
     for address in ip_ban:
         # If the IP address matches a banned address, abort the request with a 403 error and print the IP
         if ip == address:
-            print(f"IP {ip} is banned from accessing the API but tried accessing the API")
+            print(f"IP {ip} is banned from accessing the API but tried accessing the API (dns: {dns}")
             abort(403)
 
 @app.errorhandler(404)
@@ -622,5 +644,5 @@ def delete_image(filepath, delay):
 
 # Run app on port 3000
 if __name__ == "__main__":
-    serve(app, host="0.0.0.0", port=3000, debug=true) # use prod (?)
+    serve(app, host="0.0.0.0", port=3000, debug=True) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
