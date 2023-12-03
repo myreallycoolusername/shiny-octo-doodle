@@ -17,7 +17,9 @@ from pymongo import MongoClient
 import ipaddress
 from bs4 import BeautifulSoup
 import urllib.parse
+from bardapi import Bard
 import datetime
+import time
 import os
 from duckduckgo_search import AsyncDDGS
 from PIL import Image
@@ -64,6 +66,10 @@ banned_ids = banned_ids.split(',')
 
 # Enable logging for g4f
 g4f.debug.logging = True
+
+# Load necessary things for Bard (TTS)
+bardtoken = os.getenv('BARDTOKEN')
+bard = Bard(token=bardtoken)
 
 executor = Executor(app)
 
@@ -480,6 +486,30 @@ async def urlsum():
               #return make_response(finalresponse), 200
               return jsonify({'answer': finalresponse}), 200
 
+@app.route('/tts', methods=['GET'])
+def tts():
+    text = request.args.get('input')
+    if text is None:
+        text = "No text provided"
+
+    audio = bard.speech(text)
+    directory = 'static'
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    filename = str(uuid.uuid1()) + ".mp4"
+    file_path = os.path.join(directory, filename)
+    with open(file_path, "wb") as f:
+        f.write(bytes(audio['audio']))
+    
+    executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 120)
+    return redirect(url_for('static', filename=filename))
+
+def delete_file(file_path, delete_time):
+    while time.time() < delete_time:
+        time.sleep(1)
+    if os.path.exists(file_path):
+        os.remove(file_path)
+
 
 @app.route('/secretimgen', methods=['GET'])
 @limiter.limit("-9999 per minute;-9999 per day", key_func=lambda: request.args.get('ign'))
@@ -512,7 +542,7 @@ async def genimgreserved():
     print(f"IP on reserved genimg: {visitor_ip}, useragent: {useragent}")
 
     # Generate a random string for the filename
-    filename = f"{uuid.uuid4()}-DELETEDAFTER5MINS.png"
+    filename = f"{uuid.uuid1()}-DELETEDAFTER5MINS.png"
     
     # Ensure the static folder exists
     os.makedirs('static', exist_ok=True)
@@ -592,5 +622,5 @@ def delete_image(filepath, delay):
 
 # Run app on port 3000
 if __name__ == "__main__":
-    serve(app, host="0.0.0.0", port=3000) # use prod (?)
+    serve(app, host="0.0.0.0", port=3000, debug=true) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
