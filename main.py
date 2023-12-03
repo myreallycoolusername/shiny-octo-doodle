@@ -487,7 +487,7 @@ async def urlsum():
               return jsonify({'answer': finalresponse}), 200
 
 @app.route('/tts', methods=['GET'])
-@limiter.limit("30 per minute;90000 per day", key_func=lambda: request.args.get('id'))
+@limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
 def tts():
     text = request.args.get('input')
     id = request.args.get('id')
@@ -517,7 +517,7 @@ def tts():
     with open(file_path, "wb") as f:
         f.write(bytes(audio['audio']))
     
-    executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 120)
+    executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
     return redirect(url_for('static', filename=filename))
 
 def delete_file(file_path, delete_time):
