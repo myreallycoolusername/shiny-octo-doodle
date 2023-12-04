@@ -491,6 +491,9 @@ async def urlsum():
 def tts():
     text = request.args.get('input')
     id = request.args.get('id')
+    if id in banned_ids:
+        return "sorry but you are banned please leave 😠😠. also what did you do to get banned??"
+        # It is a crime to read this. 🚫🚫🚫
     if text is None:
         text = "No text provided"
         # No, stop it. Get some help.
@@ -591,19 +594,17 @@ def check_ip():
         ip = request.remote_addr
     # Convert the IP address to IPv4Address or IPv6Address object
     ip = ipaddress.ip_address(ip)
-    # Get the DNS from IP
-    dns = socket.gethostbyaddr(ip)[0]
     # Loop through the list of banned ranges
     for range in ip_range:
         # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
         if ip in range:
-            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API (dns: {dns})")
+            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
             abort(403)
     # Loop through the list of banned addresses
     for address in ip_ban:
         # If the IP address matches a banned address, abort the request with a 403 error and print the IP
         if ip == address:
-            print(f"IP {ip} is banned from accessing the API but tried accessing the API (dns: {dns}")
+            print(f"IP {ip} is banned from accessing the API but tried accessing the API")
             abort(403)
 
 @app.errorhandler(404)
