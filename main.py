@@ -339,6 +339,8 @@ async def transcript():
 def home():
     useragent = request.headers.get("user-agent")
     otherw = request.args.get('other')
+    funnyredirect = request.args.get('duck')
+    urltoredirect = os.getenv('DYTLINK')
     name = os.getenv('NAME')
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
@@ -359,6 +361,10 @@ def home():
     print(f"Visitor IP on homepage: {visitor_ip} (dns: {dns}) with useragent: {useragent}")
     if otherw == "true":
         return render_template('otherhome.html', n = name)
+        #h
+    if funnyredirect == "true":
+        return redirect(urltoredirect, code=302)
+        #stop 🚫🚫🚫
     else:
         return render_template('homepage.html')
         # shhhhhhh 🤫🤫🤫
