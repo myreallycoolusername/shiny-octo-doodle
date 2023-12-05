@@ -357,9 +357,10 @@ def home():
         # Stop!
     # Print the visitor IP to console
     print(f"Visitor IP on homepage: {visitor_ip} (dns: {dns}) with useragent: {useragent}")
-    return render_template('homepage.html')
-    if otherw == "on":
+    if otherw == "true":
         return render_template('otherhome.html', n = name)
+    else:
+        return render_template('homepage.html')
         # shhhhhhh 🤫🤫🤫
 
 @app.route('/generate', methods=['GET'])
