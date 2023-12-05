@@ -338,7 +338,7 @@ async def transcript():
 @app.route('/')
 def home():
     useragent = request.headers.get("user-agent")
-    otherw = request.args.get("other")
+    otherw = request.args.get('other')
     name = os.getenv('NAME')
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
