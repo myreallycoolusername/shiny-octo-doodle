@@ -268,8 +268,12 @@ async def transcript():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
         #😠😠😠
-    # Get DNS of user for analytics purposes
-    dns = socket.gethostbyaddr(visitor_ip)[0]
+    try:
+        # Get DNS of user for analytics purposes
+        dns = socket.gethostbyaddr(visitor_ip)[0]
+    except socket.herror:
+        dns = "No DNS found"
+        #ughhhh 🙄🙄🙄
     # Print the visitor IP to console
     print(f"/transcript: id: {id} with ip {visitor_ip} (dns: {dns}) requested a query about a YouTube video with video id {videoid}, query: {query}. useragent: {useragent}")
     try:
@@ -343,8 +347,12 @@ def home():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
         #😠😠😠😠😠😰😰😰😰😰😰
-    # Get DNS of user for analytics purposes
-    dns = socket.gethostbyaddr(visitor_ip)[0]
+    try:
+        # Get DNS of user for analytics purposes
+        dns = socket.gethostbyaddr(visitor_ip)[0]
+    except socket.herror:
+        dns = "No DNS found"
+        # Stop!
     # Print the visitor IP to console
     print(f"Visitor IP on homepage: {visitor_ip} (dns: {dns}) with useragent: {useragent}")
     return render_template('homepage.html')
@@ -372,8 +380,13 @@ async def generate():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
-    # Get DNS of user for analytics purposes
-    dns = socket.gethostbyaddr(visitor_ip)[0]
+        # 😰😳
+    try:
+        # Get DNS of user for analytics purposes
+        dns = socket.gethostbyaddr(visitor_ip)[0]
+    except socket.herror:
+        dns = "DNS not found"
+        # stop.... I warned you!
     # Print the visitor IP to console
     print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
 
@@ -509,7 +522,11 @@ def tts():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
         # Nothing more to get IP from, but nees to get DNS (not IP)
-    dns = socket.gethostbyaddr(visitor_ip)[0]
+    try:
+        dns = socket.gethostbyaddr(visitor_ip)[0]
+    except socket.herror:
+        dns = "No DNS found"
+        #ok im scared 😨😨😨
     print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
     audio = bard.speech(text)
     directory = 'static'
@@ -559,8 +576,12 @@ async def genimgreserved():
     if visitor_ip is None:
         visitor_ip = request.headers.get("X-Real-IP")
         #Nothing more.
-    # Get DNS of User for analytics purposes
-    dns = socket.gethostbyaddr(visitor_ip)[0]
+    try:
+        # Get DNS of User for analytics purposes
+        dns = socket.gethostbyaddr(visitor_ip)[0]
+    except socket.herror:
+        dns = "No DNS found"
+        #🙄🙄
     # Print the visitor IP to console
     print(f"IP on reserved genimg: {visitor_ip}, useragent: {useragent}")
 
