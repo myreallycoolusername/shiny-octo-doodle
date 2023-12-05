@@ -338,6 +338,8 @@ async def transcript():
 @app.route('/')
 def home():
     useragent = request.headers.get("user-agent")
+    otherw = request.args.get("other")
+    name = os.getenv('NAME')
     # Try to get the visitor IP address from the X-Forwarded-For header
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If the header is None, try to get the visitor IP address from the True-Client-IP header
@@ -356,6 +358,9 @@ def home():
     # Print the visitor IP to console
     print(f"Visitor IP on homepage: {visitor_ip} (dns: {dns}) with useragent: {useragent}")
     return render_template('homepage.html')
+    if otherw == "on":
+        return render_template('404.html', n = name)
+        # shhhhhhh 🤫🤫🤫
 
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
