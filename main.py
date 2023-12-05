@@ -359,7 +359,7 @@ def home():
     print(f"Visitor IP on homepage: {visitor_ip} (dns: {dns}) with useragent: {useragent}")
     return render_template('homepage.html')
     if otherw == "on":
-        return render_template('404.html', n = name)
+        return render_template('otherhome.html', n = name)
         # shhhhhhh 🤫🤫🤫
 
 @app.route('/generate', methods=['GET'])
