@@ -630,7 +630,11 @@ def check_ip():
     if ip is None:
         ip = request.remote_addr
     # Convert the IP address to IPv4Address or IPv6Address object
-    ip = ipaddress.ip_address(ip)
+    def check_ip(ip):
+        ips = ip.split(',')
+        for ip in ips:
+            ip = ipaddress.ip_address(ip)
+            # fixed
     # Loop through the list of banned ranges
     for range in ip_range:
         # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
