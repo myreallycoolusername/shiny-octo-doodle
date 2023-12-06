@@ -164,8 +164,12 @@ async def chat():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
-    # Get DNS of User for analytics purposes
-    dns = socket.gethostbyaddr(visitor_ip)[0]
+    try:
+        # Get DNS of User for analytics purposes
+        dns = socket.gethostbyaddr(visitor_ip)[0]
+    except socket.herror:
+        dns = "No DNS found"
+        #stoppppp 🙄
     # Print the visitor IP to console
     print(f"Visitor IP on /chat: {visitor_ip} (dns: {dns}), useragent: {useragent}. Query: {query}")
     # Check rate limit for id
