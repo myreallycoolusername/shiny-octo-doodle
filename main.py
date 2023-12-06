@@ -631,22 +631,18 @@ def check_ip():
         ip = request.remote_addr
     # Convert the IP address to IPv4Address or IPv6Address object
     def check_ip(ip):
-        ips = ip.split(',')
-        for ip in ips:
-            ip = ipaddress.ip_address(ip)
-            # fixed
-    # Loop through the list of banned ranges
-    for range in ip_range:
-        # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
-        if ipaddress.ip_network(ip) in range:
-            print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
-            abort(403)
-    # Loop through the list of banned addresses
-    for address in ip_ban:
-        # If the IP address matches a banned address, abort the request with a 403 error and print the IP
-        if ipaddress.ip_network(ip) == address:
-            print(f"IP {ip} is banned from accessing the API but tried accessing the API")
-            abort(403)
+  ips = ip.split(',')
+  for ip in ips:
+      ip = ipaddress.ip_address(ip)
+      # Perform the checks for each IP
+      for range in ip_range:
+          if ip in ipaddress.ip_network(range):
+              print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
+              abort(403)
+      for address in ip_ban:
+          if ip == ipaddress.ip_address(address):
+              print(f"IP {ip} is banned from accessing the API but tried accessing the API")
+              abort(403)
 
 @app.errorhandler(404)
 # inbuilt function which takes error as parameter
