@@ -638,13 +638,13 @@ def check_ip():
     # Loop through the list of banned ranges
     for range in ip_range:
         # If the IP address belongs to a banned range, abort the request with a 403 error and print the IP
-        if ip in range:
+        if ipaddress.ip_network(ip) in range:
             print(f"IP {ip} in banned range is banned from accessing the API but tried accessing the API")
             abort(403)
     # Loop through the list of banned addresses
     for address in ip_ban:
         # If the IP address matches a banned address, abort the request with a 403 error and print the IP
-        if ip == address:
+        if ipaddress.ip_network(ip) == address:
             print(f"IP {ip} is banned from accessing the API but tried accessing the API")
             abort(403)
 
