@@ -169,8 +169,7 @@ async def chat():
     ip_list = visitor_ip.split(",")
     for ip in ip_list:
         try:
-            addr_info = socket.getaddrinfo(ip, None)
-            dns = addr_info[0][3]
+            dns = socket.gethostbyaddr(ip)[0]
         except socket.herror:
             dns = "No DNS found"
         except socket.gaierror:
@@ -283,8 +282,7 @@ async def transcript():
     ip_list = visitor_ip.split(",")
     for ip in ip_list:
         try:
-            addr_info = socket.getaddrinfo(ip, None)
-            dns = addr_info[0][3]
+            dns = socket.gethostbyaddr(ip)[0]
         except socket.herror:
             dns = "No DNS found"
         except socket.gaierror:
@@ -372,8 +370,7 @@ def home():
     ip_list = visitor_ip.split(",")
     for ip in ip_list:
         try:
-            addr_info = socket.getaddrinfo(ip, None)
-            dns = addr_info[0][3]
+            dns = socket.gethostbyaddr(ip)[0]
         except socket.herror:
             dns = "No DNS found"
         except socket.gaierror:
@@ -420,8 +417,7 @@ async def generate():
     ip_list = visitor_ip.split(",")
     for ip in ip_list:
         try:
-            addr_info = socket.getaddrinfo(ip, None)
-            dns = addr_info[0][3]
+            dns = socket.gethostbyaddr(ip)[0]
         except socket.herror:
             dns = "No DNS found"
         except socket.gaierror:
@@ -499,8 +495,7 @@ async def urlsum():
           ip_list = visitor_ip.split(",")
           for ip in ip_list:
               try:
-                  addr_info = socket.getaddrinfo(ip, None)
-                  dns = addr_info[0][3]
+                  dns = socket.gethostbyaddr(ip)[0]
               except socket.herror:
                   dns = "No DNS found"
               except socket.gaierror:
@@ -581,8 +576,7 @@ def tts():
     ip_list = visitor_ip.split(",")
     for ip in ip_list:
         try:
-            addr_info = socket.getaddrinfo(ip, None)
-            dns = addr_info[0][3]
+            dns = socket.gethostbyaddr(ip)[0]
         except socket.herror:
             dns = "No DNS found"
         except socket.gaierror:
@@ -642,8 +636,7 @@ async def genimgreserved():
     ip_list = visitor_ip.split(",")
     for ip in ip_list:
         try:
-            addr_info = socket.getaddrinfo(ip, None)
-            dns = addr_info[0][3]
+            dns = socket.gethostbyaddr(ip)[0]
         except socket.herror:
             dns = "No DNS found"
         except socket.gaierror:
