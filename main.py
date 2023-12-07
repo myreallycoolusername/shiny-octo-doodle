@@ -145,6 +145,7 @@ def check_rate_limit(id):
 async def chat():
     searchq = []
     messages = []
+    dns_list = []
     searches = []
     searchsysc = []
     # Get query, id, mode and internet from url parameters using request.args dictionary 
@@ -164,12 +165,17 @@ async def chat():
     # If the header is None, use the remote_addr attribute instead
     if visitor_ip is None:
         visitor_ip = request.remote_addr
-    try:
-        # Get DNS of User for analytics purposes
-        dns = socket.gethostbyaddr(visitor_ip)[0]
-    except socket.herror:
-        dns = "No DNS found"
-        #stoppppp 🙄
+        # grrrrr
+    ip_list = visitor_ip.split(",")
+    for ip in ip_list:
+        try:
+            dns = socket.gethostbyaddr(ip)[0]
+        except socket.herror:
+            dns = "No DNS found"
+        except socket.gaierror:
+            dns = "no dns found"
+            dns_list.append(dns)
+            dns = ",".join(dns_list)
     # Print the visitor IP to console
     print(f"Visitor IP on /chat: {visitor_ip} (dns: {dns}), useragent: {useragent}. Query: {query}")
     # Check rate limit for id
@@ -253,6 +259,7 @@ async def chat():
 async def transcript():
     searchsys = system_messages.get("search")
     searches = []
+    dns_list = []
     messages1 = []
     messages = []
     system_message = []
@@ -272,12 +279,16 @@ async def transcript():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
         #😠😠😠
-    try:
-        # Get DNS of user for analytics purposes
-        dns = socket.gethostbyaddr(visitor_ip)[0]
-    except socket.herror:
-        dns = "No DNS found"
-        #ughhhh 🙄🙄🙄
+    ip_list = visitor_ip.split(",")
+    for ip in ip_list:
+        try:
+            dns = socket.gethostbyaddr(ip)[0]
+        except socket.herror:
+            dns = "No DNS found"
+        except socket.gaierror:
+            dns = "no dns found"
+            dns_list.append(dns)
+            dns = ",".join(dns_list)
     # Print the visitor IP to console
     print(f"/transcript: id: {id} with ip {visitor_ip} (dns: {dns}) requested a query about a YouTube video with video id {videoid}, query: {query}. useragent: {useragent}")
     try:
@@ -362,6 +373,8 @@ def home():
             dns = socket.gethostbyaddr(ip)[0]
         except socket.herror:
             dns = "No DNS found"
+        except socket.gaierror:
+            dns = "No DNS found"
             dns_list.append(dns)
             dns = ",".join(dns_list)
     # Print the visitor IP to console
@@ -383,6 +396,7 @@ async def generate():
     if id in banned_ids:
         return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     prompt = request.args.get('prompt')
+    dns_list = []
     useragent = request.headers.get('user-agent')
     try:
         resp = await AsyncClient.create_generation("prodia", prompt)
@@ -400,12 +414,17 @@ async def generate():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
         # 😰😳
-    try:
-        # Get DNS of user for analytics purposes
-        dns = socket.gethostbyaddr(visitor_ip)[0]
-    except socket.herror:
-        dns = "DNS not found"
-        # stop.... I warned you!
+    ip_list = visitor_ip.split(",")
+    for ip in ip_list:
+        try:
+            dns = socket.gethostbyaddr(ip)[0]
+        except socket.herror:
+            dns = "No DNS found"
+        except socket.gaierror:
+            dns = "No DNS found"
+            dns_list.append(dns)
+            dns = ",".join(dns_list)
+            # Stop.. I warned you!
     # Print the visitor IP to console
     print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
 
@@ -431,11 +450,12 @@ async def generate():
 async def urlsum():
   id = request.args.get('id')
   if id in banned_ids:
-      return 'sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? '
+      return jsonify({'error': "sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? here --> 🍪🍪"})
   internet = request.args.get('internet')
   query = request.args.get('msg')
   useragent = request.headers.get('user-agent')
   searches = []
+  dns_list = []
   thingtosearch = []
   messages = []
   url = fix_url(request.args.get('url'))
@@ -471,6 +491,17 @@ async def urlsum():
               if visitor_ip is None:
                   visitor_ip = request.remote_addr
                   # please stop😰😰
+          # Get the user's DNS.
+          ip_list = visitor_ip.split(",")
+          for ip in ip_list:
+              try:
+                  dns = socket.gethostbyaddr(ip)[0]
+              except socket.herror:
+                  dns = "No DNS found"
+              except socket.gaierror:
+                  dns = "No DNS found"
+                  dns_list.append(dns)
+                  dns = ",".join(dns_list)
           print(f"Visitor IP on /sumurl: {visitor_ip}. ID: {id}, query: {query}.")
           proxy = {'socks5': os.getenv('PROXY1')}
           response = requests.get(url, proxies=proxy)
@@ -523,8 +554,9 @@ async def urlsum():
 def tts():
     text = request.args.get('input')
     id = request.args.get('id')
+    dns_list = []
     if id in banned_ids:
-        return "sorry but you are banned please leave 😠😠. also what did you do to get banned??"
+        return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
         # It is a crime to read this. 🚫🚫🚫
     if text is None:
         text = "No text provided"
@@ -541,17 +573,22 @@ def tts():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
         # Nothing more to get IP from, but nees to get DNS (not IP)
-    try:
-        dns = socket.gethostbyaddr(visitor_ip)[0]
-    except socket.herror:
-        dns = "No DNS found"
-        #ok im scared 😨😨😨
+    ip_list = visitor_ip.split(",")
+    for ip in ip_list:
+        try:
+            dns = socket.gethostbyaddr(ip)[0]
+        except socket.herror:
+            dns = "No DNS found"
+        except socket.gaierror:
+            dns = "No DNS found"
+            dns_list.append(dns)
+            dns = ",".join(dns_list)
     print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
     audio = bard.speech(text)
     directory = 'static'
     if not os.path.exists(directory):
         os.makedirs(directory)
-    filename = str(uuid.uuid1()) + ".mp4"
+    filename = str(uuid.uuid1()) + ".mp3"
     file_path = os.path.join(directory, filename)
     with open(file_path, "wb") as f:
         f.write(bytes(audio['audio']))
@@ -571,8 +608,8 @@ def delete_file(file_path, delete_time):
 async def genimgreserved():
     authpass = request.args.get('a')
     realpass = os.getenv('PASS')
-    prompt = request.args.get('prompt')
     dns_list = []
+    prompt = request.args.get('prompt')
     useragent = request.headers.get('user-agent')
     if authpass != realpass:
         abort(403)
@@ -596,12 +633,17 @@ async def genimgreserved():
     if visitor_ip is None:
         visitor_ip = request.headers.get("X-Real-IP")
         #Nothing more.
-    try:
-        # Get DNS of User for analytics purposes
-        dns = socket.gethostbyaddr(visitor_ip)[0]
-    except socket.herror:
-        dns = "No DNS found"
-        #🙄🙄
+    ip_list = visitor_ip.split(",")
+    for ip in ip_list:
+        try:
+            dns = socket.gethostbyaddr(ip)[0]
+        except socket.herror:
+            dns = "No DNS found"
+        except socket.gaierror:
+            dns = "No DNS found"
+            dns_list.append(dns)
+            dns = ",".join(dns_list)
+    
     # Print the visitor IP to console
     print(f"IP on reserved genimg: {visitor_ip}, useragent: {useragent}")
 
@@ -689,6 +731,7 @@ if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=3000) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
 
+
 import socket
 
 visitor_ip = "78.2.22.2,9.2.2.2" # or "78.2.22.2"
@@ -696,10 +739,12 @@ ip_list = visitor_ip.split(",")
 
 dns_list = []
 for ip in ip_list:
-   try:
-       dns = socket.gethostbyaddr(ip)[0]
-   except socket.herror:
-       dns = "no"
-   dns_list.append(dns)
+  try:
+      dns = socket.gethostbyaddr(ip)[0]
+  except socket.herror:
+      dns = "no"
+  except socket.gaierror:
+      dns = "no dns found"
+  dns_list.append(dns)
 
 dns = ",".join(dns_list)
