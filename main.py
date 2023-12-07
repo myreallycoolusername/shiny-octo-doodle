@@ -344,6 +344,7 @@ def home():
     useragent = request.headers.get("user-agent")
     otherw = request.args.get('other')
     funnyredirect = request.args.get('duck')
+    dns_list = []
     urltoredirect = os.getenv('DYTLINK')
     name = os.getenv('NAME')
     # Try to get the visitor IP address from the X-Forwarded-For header
@@ -355,12 +356,14 @@ def home():
     if visitor_ip is None:
         visitor_ip = request.remote_addr
         #😠😠😠😠😠😰😰😰😰😰😰
-    try:
-        # Get DNS of user for analytics purposes
-        dns = socket.gethostbyaddr(visitor_ip)[0]
-    except socket.herror:
-        dns = "No DNS found"
-        # Stop!
+    ip_list = visitor_ip.split(",")
+    for ip in ip_list:
+        try:
+            dns = socket.gethostbyaddr(ip)[0]
+        except socket.herror:
+            dns = "No DNS found"
+            dns_list.append(dns)
+            dns = ",".join(dns_list)
     # Print the visitor IP to console
     print(f"Visitor IP on homepage: {visitor_ip} (dns: {dns}) with useragent: {useragent}")
     if otherw == "true":
@@ -569,6 +572,7 @@ async def genimgreserved():
     authpass = request.args.get('a')
     realpass = os.getenv('PASS')
     prompt = request.args.get('prompt')
+    dns_list = []
     useragent = request.headers.get('user-agent')
     if authpass != realpass:
         abort(403)
@@ -684,3 +688,18 @@ def delete_image(filepath, delay):
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=3000) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
+
+import socket
+
+visitor_ip = "78.2.22.2,9.2.2.2" # or "78.2.22.2"
+ip_list = visitor_ip.split(",")
+
+dns_list = []
+for ip in ip_list:
+   try:
+       dns = socket.gethostbyaddr(ip)[0]
+   except socket.herror:
+       dns = "no"
+   dns_list.append(dns)
+
+dns = ",".join(dns_list)
