@@ -730,22 +730,3 @@ def delete_image(filepath, delay):
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=3000) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
-
-
-import socket
-
-visitor_ip = "78.2.22.2,9.2.2.2" # or "78.2.22.2"
-ip_list = visitor_ip.split(",")
-
-dns_list = []
-for ip in ip_list:
- try:
-    addr_info = socket.getaddrinfo(ip, None)
-    dns = addr_info[0][3]
- except socket.herror:
-    dns = "no"
- except socket.gaierror:
-    dns = "no dns found"
- dns_list.append(dns)
-
-dns = ",".join(dns_list)
