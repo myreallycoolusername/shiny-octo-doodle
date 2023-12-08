@@ -567,9 +567,9 @@ def tts():
     if missing_params:
         return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
         # Please, stop!
-    if text is None:
-        text = "No text provided"
-        # No, stop it. Get some help.
+        if text is None:
+            text = "No text provided"
+            # No, stop it. Get some help.
     # Try to get the IP from X-Forwarded-For
     visitor_ip = request.headers.get("X-Forwarded-For")
     # If visitor_ip is none, then get the IP from X-Real-IP
