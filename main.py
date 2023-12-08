@@ -554,10 +554,19 @@ async def urlsum():
 def tts():
     text = request.args.get('input')
     id = request.args.get('id')
+    missing_params = []
     dns_list = []
     if id in banned_ids:
         return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
         # It is a crime to read this. 🚫🚫🚫
+    if id is None:
+       missing_params.append("id")
+        if text is None:
+            missing_params.append("input")
+            # Return error message
+    if missing_params:
+        return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
+        # Please, stop!
     if text is None:
         text = "No text provided"
         # No, stop it. Get some help.
