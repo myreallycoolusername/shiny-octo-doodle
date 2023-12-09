@@ -554,7 +554,8 @@ async def urlsum():
 def tts():
    text = request.args.get('input')
    id = request.args.get('id')
-   missing_params = []
+   expected_params = ['input', 'id']
+   missing_params = [param for param in expected_params if request.args.get(param) is None]
    dns_list = []
    if id in banned_ids:
        return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
