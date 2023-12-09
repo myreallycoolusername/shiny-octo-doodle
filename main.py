@@ -552,62 +552,52 @@ async def urlsum():
 @app.route('/tts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
 def tts():
-    text = request.args.get('input')
-    id = request.args.get('id')
-    missing_params = []
-    dns_list = []
-    if id in banned_ids:
-        return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
-        # It is a crime to read this. 🚫🚫🚫
-    if id is None:
-       missing_params.append("id")
-        if text is None:
-            missing_params.append("input")
-            # Return error message
-    if missing_params:
-        return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
-        # Please, stop!
-    # Try to get the IP from X-Forwarded-For
-    visitor_ip = request.headers.get("X-Forwarded-For")
-    # If visitor_ip is none, then get the IP from X-Real-IP
-    if visitor_ip is None:
-        visitor_ip = request.headers.get("X-Real-IP")
-    # If visitor_ip is none, then get the IP from True-Client-IP
-    if visitor_ip is None:
-        visitor_ip = request.headers.get("True-Client-IP")
-        # If visitor_ip is none, then get the IP from remote_addr
-    if visitor_ip is None:
-        visitor_ip = request.remote_addr
-        # Nothing more to get IP from, but nees to get DNS (not IP)
-    ip_list = visitor_ip.split(",")
-    for ip in ip_list:
-        try:
-            dns = socket.gethostbyaddr(ip)[0]
-        except socket.herror:
-            dns = "No DNS found"
-        except socket.gaierror:
-            dns = "No DNS found"
-            dns_list.append(dns)
-            dns = ",".join(dns_list)
-    print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
-    audio = bard.speech(text)
-    directory = 'static'
-    if not os.path.exists(directory):
-        os.makedirs(directory)
-    filename = str(uuid.uuid1()) + ".mp3"
-    file_path = os.path.join(directory, filename)
-    with open(file_path, "wb") as f:
-        f.write(bytes(audio['audio']))
-    
-    executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
-    return redirect(url_for('static', filename=filename))
+   text = request.args.get('input')
+   id = request.args.get('id')
+   missing_params = []
+   dns_list = []
+   if id in banned_ids:
+       return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
+   if id is None:
+      missing_params.append("id")
+       if text is None:
+           missing_params.append("input")
+   if missing_params:
+       return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
+   visitor_ip = request.headers.get("X-Forwarded-For")
+   if visitor_ip is None:
+       visitor_ip = request.headers.get("X-Real-IP")
+   if visitor_ip is None:
+       visitor_ip = request.headers.get("True-Client-IP")
+   if visitor_ip is None:
+       visitor_ip = request.remote_addr
+   ip_list = visitor_ip.split(",")
+   for ip in ip_list:
+       try:
+           dns = socket.gethostbyaddr(ip)[0]
+       except socket.herror:
+           dns = "No DNS found"
+       except socket.gaierror:
+           dns = "No DNS found"
+           dns_list.append(dns)
+           dns = ",".join(dns_list)
+   print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
+   audio = bard.speech(text)
+   directory = 'static'
+   if not os.path.exists(directory):
+       os.makedirs(directory)
+   filename = str(uuid.uuid1()) + ".mp3"
+   file_path = os.path.join(directory, filename)
+   with open(file_path, "wb") as f:
+       f.write(bytes(audio['audio']))
+   executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
+   return redirect(url_for('static', filename=filename))
 
 def delete_file(file_path, delete_time):
-    while time.time() < delete_time:
-        time.sleep(1)
-    if os.path.exists(file_path):
-        os.remove(file_path)
-
+   while time.time() < delete_time:
+       time.sleep(1)
+   if os.path.exists(file_path):
+       os.remove(file_path)
 
 @app.route('/secretimgen', methods=['GET'])
 @limiter.limit("-9999 per minute;-9999 per day", key_func=lambda: request.args.get('ign'))
