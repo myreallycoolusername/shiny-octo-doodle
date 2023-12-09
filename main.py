@@ -667,9 +667,9 @@ async def genimgreserved():
 @app.route('/testtts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
 def tts():
-   text = request.args.get('input', 'Empty')
-   missing_params = []
-   id = request.args.get('id', 'Empty')
+    text = request.args.get('input', 'Empty')
+    missing_params = []
+    id = request.args.get('id', 'Empty')
     if text == "Empty":
         missing_params.append("input")
         if id == "Empty":
