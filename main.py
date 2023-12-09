@@ -710,13 +710,11 @@ if not os.path.exists(directory):
         f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
         executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
         return redirect(url_for('static', filename=filename))
-
-
-def delete_file(file_path, delete_time):
-    while time.time() < delete_time:
-        time.sleep(1)
-        if os.path.exists(file_path):
-            os.remove(file_path)
+        def delete_file(file_path, delete_time):
+            while time.time() < delete_time:
+                time.sleep(1)
+                if os.path.exists(file_path):
+                    os.remove(file_path)
 
 
 # Define a function to check the IP before each request
