@@ -558,11 +558,11 @@ def tts():
    dns_list = []
    if id in banned_ids:
        return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
-   if id is None:
+   if not id:
       missing_params.append("id")
-       if text is None:
+       if not text:
            missing_params.append("input")
-           # hello please stop
+           # please stop!!! 😰😰
            if missing_params:
                return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
                # Stop! 🛑
