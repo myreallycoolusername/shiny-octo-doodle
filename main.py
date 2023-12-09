@@ -562,8 +562,10 @@ def tts():
       missing_params.append("id")
        if text is None:
            missing_params.append("input")
-   if missing_params:
-       return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
+           # hello please stop
+           if missing_params:
+               return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
+               # Stop! 🛑
    visitor_ip = request.headers.get("X-Forwarded-For")
    if visitor_ip is None:
        visitor_ip = request.headers.get("X-Real-IP")
