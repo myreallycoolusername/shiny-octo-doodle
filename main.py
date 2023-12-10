@@ -665,7 +665,6 @@ async def genimgreserved():
 
 
 @app.route('/testtts', methods=['GET'])
-@limi@app.route('/testtts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
 def tts():
    text = request.args.get('input', 'Empty')
