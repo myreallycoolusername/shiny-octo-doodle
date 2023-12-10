@@ -665,56 +665,57 @@ async def genimgreserved():
 
 
 @app.route('/testtts', methods=['GET'])
+@limi@app.route('/testtts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
 def tts():
-    text = request.args.get('input', 'Empty')
-    missing_params = []
-    id = request.args.get('id', 'Empty')
-    if text == "Empty":
-        missing_params.append("input")
-        if id == "Empty":
-            missing_params.append("id")
-            if missing_params:
-                return jsonify({'error': "You don't have parameter(s) " + ', '.join(missing_params)}), 400
-            else:
-                dns_list = []
-                if id in banned_ids:
-                    return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
-                    # grrr
-visitor_ip = request.headers.get("X-Forwarded-For")
-if visitor_ip is None:
-    visitor_ip = request.headers.get("X-Real-IP")
-    if visitor_ip is None:
-        visitor_ip = request.headers.get("True-Client-IP")
-        if visitor_ip is None:
-            visitor_ip = request.remote_addr
-            ip_list = visitor_ip.split(",")
-            for ip in ip_list:
-                try:
-                    dns = socket.gethostbyaddr(ip)[0]
-                except socket.herror:
-                    dns = "No DNS found"
-                except socket.gaierror:
-                    dns = "No DNS found"
-                    dns_list.append(dns)
-                    dns = ",".join(dns_list)
-                    # stooop!
-print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
-audio = bard.speech(text)
-directory = 'static'
-if not os.path.exists(directory):
-    os.makedirs(directory)
-    filename = str(uuid.uuid1()) + ".mp3"
-    file_path = os.path.join(directory, filename)
-    with open(file_path, "wb") as f:
-        f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
-        executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
-        return redirect(url_for('static', filename=filename))
-        def delete_file(file_path, delete_time):
-            while time.time() < delete_time:
-                time.sleep(1)
-                if os.path.exists(file_path):
-                    os.remove(file_path)
+   text = request.args.get('input', 'Empty')
+   missing_params = []
+   id = request.args.get('id', 'Empty')
+   if text == "Empty":
+       missing_params.append("input")
+       if id == "Empty":
+           missing_params.append("id")
+           if missing_params:
+               return jsonify({'error': "You don't have parameter(s) " + ', '.join(missing_params)}), 400
+           else:
+               dns_list = []
+               if id in banned_ids:
+                  return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
+                  # grrr
+   visitor_ip = request.headers.get("X-Forwarded-For")
+   if visitor_ip is None:
+       visitor_ip = request.headers.get("X-Real-IP")
+       if visitor_ip is None:
+           visitor_ip = request.headers.get("True-Client-IP")
+           if visitor_ip is None:
+               visitor_ip = request.remote_addr
+   ip_list = visitor_ip.split(",")
+   for ip in ip_list:
+       try:
+           dns = socket.gethostbyaddr(ip)[0]
+       except socket.herror:
+           dns = "No DNS found"
+       except socket.gaierror:
+           dns = "No DNS found"
+   dns_list.append(dns)
+   dns = ",".join(dns_list)
+   print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
+   audio = bard.speech(text)
+   directory = 'static'
+   if not os.path.exists(directory):
+       os.makedirs(directory)
+       filename = str(uuid.uuid1()) + ".mp3"
+       file_path = os.path.join(directory, filename)
+       with open(file_path, "wb") as f:
+           f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
+           executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
+           return redirect(url_for('static', filename=filename))
+
+def delete_file(file_path, delete_time):
+   while time.time() < delete_time:
+       time.sleep(1)
+       if os.path.exists(file_path):
+           os.remove(file_path)
 
 
 # Define a function to check the IP before each request
@@ -773,16 +774,10 @@ def limit(e):
 def idklikewhatisthiserr(e):
     # defining function
     #return render_template('502.html'), 502
-    return "uhmmm, so uhh this error got triggered because uhmmm there is no content to give you lol. they tell me im insane for writing these", 200  
-def delete_image(filepath, delay):
-    time.sleep(delay)
-    if os.path.exists(filepath):
-        os.remove(filepath)
+    return "uhmmm, so uhh this error got triggered because uhmmm there is no content to give you lol. they tell me im insane for writing these", 200
+
 
 # Run app on port 3000
 if __name__ == "__main__":
     serve(app, host="0.0.0.0", port=3000) # use prod (?)
     #app.run(host="0.0.0.0", port=3000)
-
-
-contact = url_params.get('contact', 'NA')
