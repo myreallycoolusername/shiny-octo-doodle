@@ -4,7 +4,7 @@ import socket
 from freeGPT import AsyncClient
 import flask
 from waitress import serve
-from flask import Flask, request, send_file, render_template, abort, url_for, redirect, make_response
+from flask import Flask, request, send_file, render_template, abort, url_for, redirect, make_response, jsonify
 import requests
 import asgiref
 from io import BytesIO
