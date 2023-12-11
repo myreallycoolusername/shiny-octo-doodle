@@ -3,6 +3,7 @@ g4f==0.1.8.7
 flask==2.2.5
 waitress
 beautifulsoup4
+autopep8
 bardapi
 async-timeout==4.0.2
 requests==2.31.0
