@@ -688,7 +688,7 @@ def testtts():
            else:
                dns_list = []
                if id in banned_ids:
-                  return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
+                  return jsonify({'err': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
                   # grrr
    visitor_ip = request.headers.get("X-Forwarded-For")
    if visitor_ip is None:
