@@ -684,7 +684,7 @@ def testtts():
                        novparams.append("id")
                        if novparams:
                            return jsonify({'error': "The following parameter(s) doesn't have a value: " + ', '.join(novparams)}), 400
-                           # very very cool, fun fact: this api was originally intended for a discord bot, but it didn't work out sooooo 🤫
+                           # very very cool, fun fact: this api was originally intended for a discord bot, but it didn't work out sooooo
            else:
                dns_list = []
                if id in banned_ids:
