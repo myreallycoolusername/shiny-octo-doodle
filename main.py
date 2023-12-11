@@ -679,17 +679,11 @@ def testtts():
                return jsonify({'error': "You don't have the following parameter(s): " + ', '.join(missing_params)}), 400
            else:
                if text is None:
-                   novparams.append("input")
-                   if id is None:
-                       novparams.append("id")
-                       if novparams:
-                           return jsonify({'error': "The following parameter(s) doesn't have a value: " + ', '.join(novparams)}), 400
-                           # very very cool, fun fact: this api was originally intended for a discord bot, but it didn't work out sooooo
-           else:
-               dns_list = []
-               if id in banned_ids:
-                  return jsonify({'err': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
-                  # grrr
+                  novparams.append("input")
+                  if id is None:
+                      novparams.append("id")
+                      if novparams:
+                          return jsonify({'error': "The following parameter(s) doesn't have a value: " + ', '.join(novparams)}), 400
    visitor_ip = request.headers.get("X-Forwarded-For")
    if visitor_ip is None:
        visitor_ip = request.headers.get("X-Real-IP")
