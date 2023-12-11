@@ -669,13 +669,22 @@ async def genimgreserved():
 def testtts():
    text = request.args.get('input', 'Empty')
    missing_params = []
+   novparams = []
    id = request.args.get('id', 'Empty')
    if text == "Empty":
        missing_params.append("input")
        if id == "Empty":
            missing_params.append("id")
            if missing_params:
-               return jsonify({'error': "You don't have parameter(s) " + ', '.join(missing_params)}), 400
+               return jsonify({'error': "You don't have the following parameter(s): " + ', '.join(missing_params)}), 400
+           else:
+               if text is None:
+                   novparams.append("input")
+                   if id is None:
+                       novparams.append("id")
+                       if novparams:
+                           return jsonify({'error': "The following parameter(s) doesn't have a value: " + ', '.join(novparams)}), 400
+                           # very very cool, fun fact: this api was originally intended for a discord bot, but it didn't work out sooooo 🤫
            else:
                dns_list = []
                if id in banned_ids:
