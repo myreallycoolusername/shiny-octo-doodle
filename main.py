@@ -50,7 +50,7 @@ ip_ban.init_app(app)
 whitelistedips = os.getenv('WHITELISTEDIPS')
 
 # Split whitelisted IPs
-whitelistedips.set(whitelistedips.split(","))
+whitelistedips = set(whitelistedips.split(","))
 
 # Strip whitespace from Whitelisted IPS
 whitelistedips = [whitelisted.strip() for whitelisted in whitelistedips]
