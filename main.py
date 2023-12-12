@@ -41,7 +41,7 @@ sentry_sdk.init(
 app = Flask(__name__)
 
 # Start the Flask-IPBan
-ip_ban.init_app(app)
+IpBan.init_app(app)
 
 # Whitelisted IPS
 whitelistedips = os.getenv('WHITELISTEDIPS')
@@ -52,13 +52,13 @@ whitelistedips.set(whitelistedips.split(","))
 # Strip whitespace from Whitelisted IPS
 whitelistedips = [whitelisted.strip() for whitelisted in whitelistedips]
 
-ip_ban.ip_whitelist_add(whitelistedips)
+IpBan.ip_whitelist_add(whitelistedips)
 
 # AbuseIPDB key
 aipdbkey = os.getenv('ABUSEIPDBKEY')
 
 # Use AbuseIPDB from Flask-IPBan
-ip_ban.abuse_IPDB_config(key=aipdbkey, report=true, load=False, debug=False)
+IpBan.abuse_IPDB_config(key=aipdbkey, report=true, load=False, debug=False)
 
 # Get the banned IPs (ip range) from the environment variable
 ip_range = os.getenv("NETBAN")
