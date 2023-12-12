@@ -41,7 +41,7 @@ sentry_sdk.init(
 app = Flask(__name__)
 
 # Start the Flask-IPBan
-IpBan.init_app(app)
+IpBan.init_app(app=app)
 
 # Whitelisted IPS
 whitelistedips = os.getenv('WHITELISTEDIPS')
