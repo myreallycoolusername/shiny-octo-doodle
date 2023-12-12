@@ -6,6 +6,7 @@ beautifulsoup4
 autopep8
 bardapi
 async-timeout==4.0.2
+flask-ipban
 requests==2.31.0
 Flask-Limiter==3.3.1
 pymongo==4.4.1
