@@ -64,7 +64,7 @@ ipban.ip_whitelist_add(whitelistedips)
 aipdbkey = os.getenv("ABUSEIPDBKEY")
 
 # Use AbuseIPDB from Flask-IPBan
-ipban.abuse_IPDB_config(key=aipdbkey, report=True)
+IpBan.abuse_IPDB_config(key=aipdbkey, report=True)
 
 # Get the banned IPs (ip range) from the environment variable
 ip_range = os.getenv("NETBAN")
