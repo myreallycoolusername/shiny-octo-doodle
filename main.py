@@ -46,6 +46,9 @@ ipban = IpBan(ban_seconds=432000)
 # Initiate Flask-IpBan
 ipban.init_app(app)
 
+# Load nuisances from Flask-IpBan
+ipban.load_nuisances()
+
 # Whitelisted IPS
 whitelistedips = os.getenv('WHITELISTEDIPS')
 
