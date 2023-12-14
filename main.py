@@ -41,7 +41,8 @@ sentry_sdk.init(
 app = Flask(__name__)
 
 # Start Flask-IPBan
-ipban = IpBan(ban_seconds=432000)
+#ipban = IpBan(ban_seconds=432000)
+ipban = IpBan()
 
 # Initiate Flask-IpBan
 ipban.init_app(app)
