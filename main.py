@@ -43,11 +43,14 @@ app = Flask(__name__)
 # Start Flask-IPBan
 ipban = IpBan(ban_seconds=432000)
 
-# Initiate Flask-IpBan
-ipban.init_app(app)
+# AbuseIPDB key
+abipdbkey = os.getenv("ABUSEIPDBKEY")
 
 # Load nuisances from Flask-IpBan
 ipban.load_nuisances()
+
+# Initiate Flask-IpBan
+ipban.init_app(app, abuse_IPDB_config={'key': abipdbkey, 'report': True, 'load': false})
 
 # Whitelisted IPS
 whitelistedips = os.getenv('WHITELISTEDIPS')
@@ -59,12 +62,6 @@ whitelistedips = set(whitelistedips.split(","))
 whitelistedips = [whitelisted.strip() for whitelisted in whitelistedips]
 
 ipban.ip_whitelist_add(whitelistedips)
-
-# AbuseIPDB key
-abipdbkey = os.getenv("ABUSEIPDBKEY")
-
-# Use AbuseIPDB from Flask-IPBan
-ipban.abuse_IPDB_config({key=abipdbkey, report=True})
 
 # Get the banned IPs (ip range) from the environment variable
 ip_range = os.getenv("NETBAN")
@@ -552,6 +549,61 @@ async def urlsum():
                          else:
                              searches = r.json()
                              searchesv = searches
+@app.route('/testtts', methods=['GET'])
+@limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
+def testtts():
+   text = request.args.get('input', 'Empty')
+   missing_params = []
+   novparams = []
+   id = request.args.get('id', 'Empty')
+   if text == "Empty":
+       missing_params.append("input")
+       if id == "Empty":
+           missing_params.append("id")
+           if missing_params:
+               return jsonify({'error': "You don't have the following parameter(s): " + ', '.join(missing_params)}), 400
+           else:
+               if text is None:
+                  novparams.append("input")
+                  if id is None:
+                      novparams.append("id")
+                      if novparams:
+                          return jsonify({'error': "The following parameter(s) doesn't have a value: " + ', '.join(novparams)}), 400
+   visitor_ip = request.headers.get("X-Forwarded-For")
+   if visitor_ip is None:
+       visitor_ip = request.headers.get("X-Real-IP")
+       if visitor_ip is None:
+           visitor_ip = request.headers.get("True-Client-IP")
+           if visitor_ip is None:
+               visitor_ip = request.remote_addr
+   ip_list = visitor_ip.split(",")
+   for ip in ip_list:
+       try:
+           dns = socket.gethostbyaddr(ip)[0]
+       except socket.herror:
+           dns = "No DNS found"
+       except socket.gaierror:
+           dns = "No DNS found"
+   dns_list.append(dns)
+   dns = ",".join(dns_list)
+   print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
+   audio = bard.speech(text)
+   directory = 'static'
+   if not os.path.exists(directory):
+       os.makedirs(directory)
+       filename = str(uuid.uuid1()) + ".mp3"
+       file_path = os.path.join(directory, filename)
+       with open(file_path, "wb") as f:
+           f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
+           executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
+           return redirect(url_for('static', filename=filename))
+
+def delete_file(file_path, delete_time):
+   while time.time() < delete_time:
+       time.sleep(1)
+       if os.path.exists(file_path):
+           os.remove(file_path)
+
                              formatted_data = []
                              for item in searchesv:
                                 title = item["title"]
@@ -576,31 +628,34 @@ async def urlsum():
               #return make_response(finalresponse), 200
               return jsonify({'answer': finalresponse}), 200
 
+
 @app.route('/tts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
 def tts():
-   text = request.args.get('input')
-   id = request.args.get('id')
-   expected_params = ['input', 'id']
-   missing_params = [param for param in expected_params if request.args.get(param) is None]
-   dns_list = []
-   if id in banned_ids:
-       return jsonify({'answer': "sorry but you are banned please leave 😠😠. also what did you do to get banned?? 😳😳😳"}), 200
-       if not id:
+   text = request.args.get('input', 'Empty')
+   missing_params = []
+   novparams = []
+   id = request.args.get('id', 'Empty')
+   if text == "Empty":
+       missing_params.append("input")
+       if id == "Empty":
            missing_params.append("id")
-           if not text:
-               missing_params.append("input")
-               # please stop!!! 😰😰
            if missing_params:
-               return jsonify({'error': "You don't have parameter " + ', '.join(missing_params)}), 400
-               # Stop! 🛑
+               return jsonify({'error': "You don't have the following parameter(s): " + ', '.join(missing_params)}), 400
+           else:
+               if text is None:
+                  novparams.append("input")
+                  if id is None:
+                      novparams.append("id")
+                      if novparams:
+                          return jsonify({'error': "The following parameter(s) doesn't have a value: " + ', '.join(novparams)}), 400
    visitor_ip = request.headers.get("X-Forwarded-For")
    if visitor_ip is None:
        visitor_ip = request.headers.get("X-Real-IP")
-   if visitor_ip is None:
-       visitor_ip = request.headers.get("True-Client-IP")
-   if visitor_ip is None:
-       visitor_ip = request.remote_addr
+       if visitor_ip is None:
+           visitor_ip = request.headers.get("True-Client-IP")
+           if visitor_ip is None:
+               visitor_ip = request.remote_addr
    ip_list = visitor_ip.split(",")
    for ip in ip_list:
        try:
@@ -609,25 +664,26 @@ def tts():
            dns = "No DNS found"
        except socket.gaierror:
            dns = "No DNS found"
-           dns_list.append(dns)
-           dns = ",".join(dns_list)
+   dns_list.append(dns)
+   dns = ",".join(dns_list)
    print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
    audio = bard.speech(text)
    directory = 'static'
    if not os.path.exists(directory):
        os.makedirs(directory)
-   filename = str(uuid.uuid1()) + ".mp3"
-   file_path = os.path.join(directory, filename)
-   with open(file_path, "wb") as f:
-       f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
-   executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
-   return redirect(url_for('static', filename=filename))
+       filename = str(uuid.uuid1()) + ".mp3"
+       file_path = os.path.join(directory, filename)
+       with open(file_path, "wb") as f:
+           f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
+           executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
+           return redirect(url_for('static', filename=filename))
 
 def delete_file(file_path, delete_time):
    while time.time() < delete_time:
        time.sleep(1)
-   if os.path.exists(file_path):
-       os.remove(file_path)
+       if os.path.exists(file_path):
+           os.remove(file_path)
+
 
 @app.route('/secretimgen', methods=['GET'])
 @limiter.limit("-9999 per minute;-9999 per day", key_func=lambda: request.args.get('ign'))
@@ -690,61 +746,6 @@ async def genimgreserved():
     return redirect(url_for('static', filename=filename))
     run(genimgreserved())
 
-
-@app.route('/testtts', methods=['GET'])
-@limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
-def testtts():
-   text = request.args.get('input', 'Empty')
-   missing_params = []
-   novparams = []
-   id = request.args.get('id', 'Empty')
-   if text == "Empty":
-       missing_params.append("input")
-       if id == "Empty":
-           missing_params.append("id")
-           if missing_params:
-               return jsonify({'error': "You don't have the following parameter(s): " + ', '.join(missing_params)}), 400
-           else:
-               if text is None:
-                  novparams.append("input")
-                  if id is None:
-                      novparams.append("id")
-                      if novparams:
-                          return jsonify({'error': "The following parameter(s) doesn't have a value: " + ', '.join(novparams)}), 400
-   visitor_ip = request.headers.get("X-Forwarded-For")
-   if visitor_ip is None:
-       visitor_ip = request.headers.get("X-Real-IP")
-       if visitor_ip is None:
-           visitor_ip = request.headers.get("True-Client-IP")
-           if visitor_ip is None:
-               visitor_ip = request.remote_addr
-   ip_list = visitor_ip.split(",")
-   for ip in ip_list:
-       try:
-           dns = socket.gethostbyaddr(ip)[0]
-       except socket.herror:
-           dns = "No DNS found"
-       except socket.gaierror:
-           dns = "No DNS found"
-   dns_list.append(dns)
-   dns = ",".join(dns_list)
-   print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
-   audio = bard.speech(text)
-   directory = 'static'
-   if not os.path.exists(directory):
-       os.makedirs(directory)
-       filename = str(uuid.uuid1()) + ".mp3"
-       file_path = os.path.join(directory, filename)
-       with open(file_path, "wb") as f:
-           f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
-           executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
-           return redirect(url_for('static', filename=filename))
-
-def delete_file(file_path, delete_time):
-   while time.time() < delete_time:
-       time.sleep(1)
-       if os.path.exists(file_path):
-           os.remove(file_path)
 
 
 # Define a function to check the IP before each request
