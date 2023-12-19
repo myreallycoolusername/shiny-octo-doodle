@@ -549,8 +549,6 @@ async def urlsum():
                          else:
                              searches = r.json()
                              searchesv = searches
-
-
                              formatted_data = []
                              for item in searchesv:
                                 title = item["title"]
