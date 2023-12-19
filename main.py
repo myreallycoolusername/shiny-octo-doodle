@@ -49,8 +49,11 @@ abipdbkey = os.getenv("ABUSEIPDBKEY")
 # Load nuisances from Flask-IpBan
 ipban.load_nuisances()
 
+# Load AbuseIPDB from Flask-IpBan
+ipban.abuse_IPDB_config = {'key': abipdbkey, 'report': True, 'load': False}
+
 # Initiate Flask-IpBan
-ipban.init_app(app, abuse_IPDB_config={'key': abipdbkey, 'report': True, 'load': False})
+ipban.init_app(app)
 
 # Whitelisted IPS
 whitelistedips = os.getenv('WHITELISTEDIPS')
