@@ -41,7 +41,7 @@ sentry_sdk.init(
 app = Flask(__name__)
 
 # Start Flask-IPBan
-ipban = IpBan(ban_seconds=432000, ip_header='X_TRUE_IP')
+ipban = IpBan(ban_seconds=432000, ip_header='X-Forwarded-For')
 
 # AbuseIPDB key
 abipdbkey = os.getenv("ABUSEIPDBKEY")
