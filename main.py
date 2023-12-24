@@ -723,13 +723,11 @@ def check_ip(ip):
                     if ip == ipaddress.ip_address(address):
                         print(f"IP {ip} is banned from accessing the API but tried accessing the API")
                         abort(403)
-                        
-# New user agent check code...
-user_agent = request.headers.get('User-Agent')
-if user_agent in blocked_user_agents:
-    abort(403)
-
-
+                        def block_user_agents():
+                            user_agent = request.headers.get('User-Agent')
+                            if user_agent in blocked_user_agents:
+                                abort(403)
+                                # Fool me once, shame on you, fool me twice, shame on me, fool me thrice, shame on us!
 @app.errorhandler(404)
 # inbuilt function which takes error as parameter
 def not_found(e):
