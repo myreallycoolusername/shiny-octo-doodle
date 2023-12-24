@@ -94,6 +94,9 @@ banned_ids = banned_ids.split(',')
 # Enable logging for g4f
 g4f.debug.logging = True
 
+# Get banned user agents
+blocked_user_agents = os.getenv('UAGENT').split(',')
+
 # Load necessary things for Bard (TTS)
 bardtoken = os.getenv('BARDCOOKIE')
 bard = Bard(token=bardtoken)
@@ -720,6 +723,12 @@ def check_ip(ip):
                     if ip == ipaddress.ip_address(address):
                         print(f"IP {ip} is banned from accessing the API but tried accessing the API")
                         abort(403)
+                        
+# New user agent check code...
+user_agent = request.headers.get('User-Agent')
+if user_agent in blocked_user_agents:
+    abort(403)
+
 
 @app.errorhandler(404)
 # inbuilt function which takes error as parameter
@@ -748,7 +757,7 @@ def limit(e):
     return "rate limit reached, try again later. wait, waittt, waitt... what did you even do to reach the rate limit?? 🤨🤨🤨🤨🤨🤨😳😳😳😳", 200
 @app.errorhandler(502)
 # inbuilt function which takes error as parameter
-def idklikewhatisthiserr(e):
+def idklewhatisthiserr(e):
     # defining function
     #return render_template('502.html'), 502
     return "uhmmm, so uhh this error got triggered because uhmmm there is no content to give you lol. they tell me im insane for writing these", 200
