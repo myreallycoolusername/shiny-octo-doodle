@@ -289,6 +289,8 @@ async def chat():
 async def transcript():
     searchsys = system_messages.get("search")
     searches = []
+    missing_params = []
+    novparams = []
     dns_list = []
     messages1 = []
     messages = []
@@ -426,6 +428,8 @@ async def generate():
     if id in banned_ids:
         return 'sorry but you are banned lol  what did you even do to get banned bruh??  anyway, do you want some cookies? '
     prompt = request.args.get('prompt')
+    missing_params = []
+    novparams = []
     dns_list = []
     useragent = request.headers.get('user-agent')
     try:
@@ -481,7 +485,7 @@ async def urlsum():
   id = request.args.get('id')
   if id in banned_ids:
       return jsonify({'error': "sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? here --> 🍪🍪"})
-  internet = request.args.get('internet')
+  internet = request.args.get('internet', 'off')
   query = request.args.get('msg')
   useragent = request.headers.get('user-agent')
   searches = []
