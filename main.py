@@ -595,30 +595,26 @@ if not id:
                 finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.OnlineGpt, messages=messages)  # , cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
                 # return make_response(finalresponse), 200
                 return jsonify({"answer": finalresponse}), 200
-        except socket.gaierror:
-            dns = "No DNS found"
-            dns_list.append(dns)
-            dns = ",".join(dns_list)
-            # Stop.. I warned you!
-    # Print the visitor IP to console
-    print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
-
-    # Generate a random string for the filename
-    filename = f"{uuid.uuid1()}-DELETEDAFTER5MINS.png"
-    
-    # Ensure the static folder exists
-    os.makedirs('static', exist_ok=True)
-    
-    # Save the image to the static folder
-    filepath = os.path.join('static', filename)
-    img.save(filepath)
-
-    # Schedule the deletion of the image file after 5 minutes
-    executor.submit(delete_image, filepath, delay=300)
-
-    # Redirect the user to the URL of the saved image
-    return redirect(url_for('static', filename=filename))
-    run(generate())
+                #h
+except socket.gaierror:
+dns = "No DNS found"
+dns_list.append(dns)
+dns = ",".join(dns_list)
+# Stop.. I warned you!
+# Print the visitor IP to console
+print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
+# Generate a random string for the filename
+filename = f"{uuid.uuid1()}-DELETEDAFTER5MINS.png"
+# Ensure the static folder exists
+os.makedirs('static', exist_ok=True)
+# Save the image to the static folder
+filepath = os.path.join('static', filename)
+img.save(filepath)
+# Schedule the deletion of the image file after 5 minutes
+executor.submit(delete_image, filepath, delay=300)
+# Redirect the user to the URL of the saved image
+return redirect(url_for('static', filename=filename))
+run(generate())
 
 
 @app.route('/tts', methods=['GET'])
