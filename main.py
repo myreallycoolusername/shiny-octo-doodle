@@ -551,12 +551,12 @@ if not id:
             links = soup.find_all("a")
             paragraphs = soup.find_all("p")
             text = soup.find_all("h2")
-            scrapetext = (" ".join([p.get_text() for p in paragraphs]) + ". " + " ".join([link.get("href") for link in links] + ". " + ", ".join([t.get_text() for t in text]) + ".")
+            scrapetext = (" ".join([p.get_text() for p in paragraphs]) + ". " + " ".join([link.get("href") for link in links]) + ". " + ", ".join([t.get_text() for t in text]) + ".")
             messages = [
                 {"role": "system", "content": system_message},
                 {"role": "user", "content": query},
             ]
-            proxy = (os.getenv("PROXY3"),)
+            proxy = os.getenv("PROXY3")
             thingtosearch = g4f.ChatCompletion.create(
                 model=g4f.models.default,
                 provider=g4f.Provider.Llama2,
