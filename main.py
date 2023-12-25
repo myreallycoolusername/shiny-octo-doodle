@@ -440,117 +440,101 @@ def home():
 @app.route("/sumurl", methods=["GET"])
 @limiter.limit("30 per minute;90000 per day", key_func=lambda: request.args.get("id"))
 async def urlsum():
-    id = request.args.get("id", "1")
-    if id in banned_ids:
-        return jsonify({"error": "sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? here --> 🍪🍪"})
-    internet = request.args.get("internet", "off")
-    query = request.args.get("msg", "Empty")
-    useragent = request.headers.get("user-agent")
-    searches = []
-    novparams = []
-    dns_list = []
-    thingtosearch = []
-    messages = []
-    url = fix_url(request.args.get("url", "Empty"))
-    system_message = system_messages.get("sumsys")
+   id = request.args.get("id", "1")
+   if id in banned_ids:
+       return jsonify({"error": "sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? here --> 🍪🍪"})
+   internet = request.args.get("internet", "off")
+   query = request.args.get("msg", "Empty")
+   useragent = request.headers.get("user-agent")
+   searches = []
+   novparams = []
+   dns_list = []
+   thingtosearch = []
+   messages = []
+   url = fix_url(request.args.get("url", "Empty"))
+   system_message = system_messages.get("sumsys")
 
-    if query == "Empty":
-        novparams.append("query")
-        if url == "Empty":
-            novparams.append("url")
-            if novparams:
-                return jsonify({"error": "The following parameter(s) doesn't have a value: " + ", ".join(novparams)}), 400
-            else:
-                # Make an empty list of err
-                err = []
-                # Check if each parameter is present
-        # id
-if not id:
-    err.append("Id parameter is required. ")
-    # query
-    if not query:
-        err.append("Query parameter is required. ")
-        # url
-        if not url:
-            err.append("Url parameter is required. ")
-            # end
-            if len(err) > 0:
-                # Join the error lists
-                error_output = "".join(err)
-                return flask.make_response(flask.jsonify({"error": error_output}, 200))
-                # Stop is stop, I will take your rizz! 😡😏😏😍😍🥰🥰
-        else:
-            # Try to get the visitor IP address from the X-Forwarded-For header
-            visitor_ip = request.headers.get("X-Forwarded-For")
-            # If the header is None, try to get the visitor IP address from the True-Client-IP header
-            if visitor_ip is None:
-                visitor_ip = request.headers.get("True-Client-IP")
-                # If the header is None, use the remote_addr attribute instead
-                if visitor_ip is None:
-                    visitor_ip = request.remote_addr
-                    # please stop😰😰
-            # Get the user's DNS.
-            ip_list = visitor_ip.split(",")
-            for ip in ip_list:
-                try:
-                    dns = socket.gethostbyaddr(ip)[0]
-                except socket.herror:
-                    dns = "No DNS found"
-                except socket.gaierror:
-                    dns = "No DNS found"
-                    dns_list.append(dns)
-                    dns = ",".join(dns_list)
-            print(f"Visitor IP on /sumurl: {visitor_ip}. ID: {id}, query: {query}.")
-            proxy = {"socks5": os.getenv("PROXY1")}
-            response = requests.get(url, proxies=proxy)
-            soup = BeautifulSoup(response.content, "html.parser")
-            links = soup.find_all("a")
-            paragraphs = soup.find_all("p")
-            text = soup.find_all("h2")
-            scrapetext = (" ".join([p.get_text() for p in paragraphs]) + ". " + " ".join([link.get("href") for link in links]) + ". " + ", ".join([t.get_text() for t in text]) + ".")
-            messages = [
-                {"role": "system", "content": system_message},
-                {"role": "user", "content": query},
-            ]
-            proxy = os.getenv("PROXY3")
-            thingtosearch = g4f.ChatCompletion.create(
-                model=g4f.models.default,
-                provider=g4f.Provider.Llama2,
-                messages=messages,
-            )
-            if internet == "on":
-                async def search3():
-                    with AsyncDDGS(proxies=os.getenv("PROXY"), timeout=120) as ddgs:
-                        for r in ddgs.text(thingtosearch, region="wt-wt", safesearch=on, max_results=300000000000000):
-                            if type(r) == dict:
-                                searches = [r]
-                            else:
-                                searches = r.json()
-                                searchesv = searches
-                                formatted_data = []
-                                for item in searchesv:
-                                    title = item["title"]
-                                    link = item["href"]
-                                    snippet = item["body"]
-                                    formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
-                                    formatted_data.append(formatted_string)
-                                    formatted_output = " ".join(formatted_data)
-                                    internet_output = formatted_output
-                                    if internet_output is None:
-                                        internet_output = "Internet disabled."
-                                        # 😠😠
-                                    system_message = f"{system_message} Text:{scrapetext}. Internet Search Results: {internet_output}. Today's date is: {date}, the current time is: {time}."
-                                    # query = f"{query}. I am referring to the website (only website content) in the system message. Website info (the one im on right now): Title: None, URL: {url}."
-                                    # ok thats it one more time and yk what happens
+   if query == "Empty":
+       novparams.append("query")
+       if url == "Empty":
+           novparams.append("url")
+           if novparams:
+               return jsonify({"error": "The following parameter(s) doesn't have a value: " + ", ".join(novparams)}), 400
+           else:
+               err = []
+               if not id:
+                  err.append("Id parameter is required. ")
+               if not query:
+                  err.append("Query parameter is required. ")
+               if not url:
+                  err.append("Url parameter is required. ")
 
-                messages1 = [
-                    {"role": "system", "content": system_message},
-                    {"role": "user", "content": query},
-                ]
-                proxy = (os.getenv("PROXY2"),)
-                finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.OnlineGpt, messages=messages)  # , cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
-                # return make_response(finalresponse), 200
-                return jsonify({"answer": finalresponse}), 200
+               if len(err) > 0:
+                  error_output = "".join(err)
+                  return flask.make_response(flask.jsonify({"error": error_output}, 200))
+
+   visitor_ip = request.headers.get("X-Forwarded-For")
+   if visitor_ip is None:
+       visitor_ip = request.headers.get("True-Client-IP")
+   if visitor_ip is None:
+       visitor_ip = request.remote_addr
+   ip_list = visitor_ip.split(",")
+   for ip in ip_list:
+       try:
+           dns = socket.gethostbyaddr(ip)[0]
+       except socket.herror:
+           dns = "No DNS found"
+       except socket.gaierror:
+           dns = "No DNS found"
+       dns_list.append(dns)
+   dns = ",".join(dns_list)
+   print(f"Visitor IP on /sumurl: {visitor_ip}. ID: {id}, query: {query}.")
+   proxy = {"socks5": os.getenv("PROXY1")}
+   response = requests.get(url, proxies=proxy)
+   soup = BeautifulSoup(response.content, "html.parser")
+   links = soup.find_all("a")
+   paragraphs = soup.find_all("p")
+   text = soup.find_all("h2")
+   scrapetext = (" ".join([p.get_text() for p in paragraphs]) + ". " + " ".join([link.get("href") for link in links]) + ". " + ", ".join([t.get_text() for t in text]) + ".")
+   messages = [
+       {"role": "system", "content": system_message},
+       {"role": "user", "content": query},
+   ]
+   proxy = os.getenv("PROXY3")
+   thingtosearch = g4f.ChatCompletion.create(
+       model=g4f.models.default,
+       provider=g4f.Provider.Llama2,
+       messages=messages,
+   )
+   if internet == "on":
+       async def search3():
+           with AsyncDDGS(proxies=os.getenv("PROXY"), timeout=120) as ddgs:
+               for r in ddgs.text(thingtosearch, region="wt-wt", safesearch=on, max_results=300000000000000):
+                  if type(r) == dict:
+                      searches = [r]
+                  else:
+                      searches = r.json()
+                      searchesv = searches
+                      formatted_data = []
+                      for item in searchesv:
+                          title = item["title"]
+                          link = item["href"]
+                          snippet = item["body"]
+                          formatted_string = f"link: {link}, title: {title}, snippet: {snippet}. (... means there's more)"
+                          formatted_data.append(formatted_string)
+                      formatted_output = " ".join(formatted_data)
+                      internet_output = formatted_output
+                      if internet_output is None:
+                          internet_output = "Internet disabled."
+                      system_message = f"{system_message} Text:{scrapetext}. Internet Search Results: {internet_output}. Today's date is: {date}, the current time is: {time}."
+   messages1 = [
+       {"role": "system", "content": system_message},
+       {"role": "user", "content": query},
+   ]
+   proxy = (os.getenv("PROXY2"),)
+   finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.OnlineGpt, messages=messages)
+   return jsonify({"answer": finalresponse}), 200
+
 
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
