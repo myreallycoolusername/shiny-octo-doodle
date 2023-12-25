@@ -437,56 +437,12 @@ def home():
         return render_template('homepage.html')
         # shhhhhhh 🤫🤫🤫
 
-@app.route('/generate', methods=['GET'])
-@limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
-async def generate():
-    id = request.args.get('id', '1')
-    if id in banned_ids:
-        return 'sorry but you are banned lol (or you didnt specify your id, stranger!) what did you even do to get banned bruh??  anyway, do you want some cookies? '
-    prompt = request.args.get('prompt', 'Empty')
-    dns_list = []
-    useragent = request.headers.get('user-agent')
-    novparams = []
-    if prompt == 'Empty':
-        return jsonify({'error': "You don't have the following parameter: prompt"}), 400
-    else:
-        if prompt is None:
-            return jsonify({'error': "The following parameter is empty: prompt"}), 400
-            if id is None:
-                id = '1'
-                # Lol this is the weirdest one I have ever done and also different from other endpoints
-    try:
-        resp = await AsyncClient.create_generation("prodia", prompt)
-        img = Image.open(BytesIO(resp))
-    except Exception as e:
-        print('/generate: endpoint crashed. err: {e}')
-        return f"we are very very very very very sowwy about this 😰😰😰😰😰 but our serwwers are not wurking 👉👈 maybe try again???? report to owner with this error: {e}"
-        #stop it 😭😭😭
-    # Try to get the visitor IP address from the X-Forwarded-For header
-    visitor_ip = request.headers.get("X-Forwarded-For")
-    # If the header is None, try to get the visitor IP address from the True-Client-IP header
-    if visitor_ip is None:
-        visitor_ip = request.headers.get("True-Client-IP")
-    # If the header is None, use the remote_addr attribute instead
-    if visitor_ip is None:
-        visitor_ip = request.remote_addr
-        # 😰😳
-    ip_list = visitor_ip.split(",")
-    for ip in ip_list:
-        try:
-            dns = socket.gethostbyaddr(ip)[0]
-        except socket.herror:
-            dns = "No DNS found"
 @app.route("/sumurl", methods=["GET"])
 @limiter.limit("30 per minute;90000 per day", key_func=lambda: request.args.get("id"))
 async def urlsum():
     id = request.args.get("id", "1")
     if id in banned_ids:
-        return jsonify(
-            {
-                "error": "sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? here --> 🍪🍪"
-            }
-        )
+        return jsonify({"error": "sorry but you are banned lol what did you even do to get banned bruh?? anyway, do you want some cookies? here --> 🍪🍪"})
     internet = request.args.get("internet", "off")
     query = request.args.get("msg", "Empty")
     useragent = request.headers.get("user-agent")
@@ -595,12 +551,52 @@ if not id:
                 finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.OnlineGpt, messages=messages)  # , cookies={"token": os.getenv('HFCOOKIE')}, auth=True)
                 # return make_response(finalresponse), 200
                 return jsonify({"answer": finalresponse}), 200
-                #h
-except socket.gaierror:
-dns = "No DNS found"
-dns_list.append(dns)
-dns = ",".join(dns_list)
-# Stop.. I warned you!
+
+@app.route('/generate', methods=['GET'])
+@limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
+async def generate():
+    id = request.args.get('id', '1')
+    if id in banned_ids:
+        return 'sorry but you are banned lol (or you didnt specify your id, stranger!) what did you even do to get banned bruh??  anyway, do you want some cookies? '
+    prompt = request.args.get('prompt', 'Empty')
+    dns_list = []
+    useragent = request.headers.get('user-agent')
+    novparams = []
+    if prompt == 'Empty':
+        return jsonify({'error': "You don't have the following parameter: prompt"}), 400
+    else:
+        if prompt is None:
+            return jsonify({'error': "The following parameter is empty: prompt"}), 400
+            if id is None:
+                id = '1'
+                # Lol this is the weirdest one I have ever done and also different from other endpoints
+    try:
+        resp = await AsyncClient.create_generation("prodia", prompt)
+        img = Image.open(BytesIO(resp))
+    except Exception as e:
+        print('/generate: endpoint crashed. err: {e}')
+        return f"we are very very very very very sowwy about this 😰😰😰😰😰 but our serwwers are not wurking 👉👈 maybe try again???? report to owner with this error: {e}"
+        #stop it 😭😭😭
+    # Try to get the visitor IP address from the X-Forwarded-For header
+    visitor_ip = request.headers.get("X-Forwarded-For")
+    # If the header is None, try to get the visitor IP address from the True-Client-IP header
+    if visitor_ip is None:
+        visitor_ip = request.headers.get("True-Client-IP")
+    # If the header is None, use the remote_addr attribute instead
+    if visitor_ip is None:
+        visitor_ip = request.remote_addr
+        # 😰😳
+    ip_list = visitor_ip.split(",")
+    for ip in ip_list:
+        try:
+            dns = socket.gethostbyaddr(ip)[0]
+        except socket.herror:
+            dns = "No DNS found"
+        except socket.gaierror:
+            dns = "No DNS found"
+            dns_list.append(dns)
+            dns = ",".join(dns_list)
+            # Stop.. I warned you!
 # Print the visitor IP to console
 print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
 # Generate a random string for the filename
