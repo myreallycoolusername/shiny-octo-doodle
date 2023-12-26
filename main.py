@@ -8,6 +8,7 @@ from flask import Flask, request, send_file, render_template, abort, url_for, re
 import requests
 import asgiref
 from io import BytesIO
+from asyncio import run
 import uuid
 import sentry_sdk
 from flask_ipban import IpBan
