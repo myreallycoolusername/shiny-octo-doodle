@@ -581,8 +581,8 @@ async def generate():
    img.save(filepath)
    executor.submit(delete_image, filepath, delay=300)
    return redirect(url_for('static', filename=filename))
+   run(generate())
 
-run(generate())
 
 @app.route('/tts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
