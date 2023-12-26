@@ -535,67 +535,53 @@ async def urlsum():
    finalresponse = g4f.ChatCompletion.create(model=g4f.models.default, provider=g4f.Provider.OnlineGpt, messages=messages)
    return jsonify({"answer": finalresponse}), 200
 
-
 @app.route('/generate', methods=['GET'])
 @limiter.limit("10 per minute;9000 per day", key_func=lambda: request.args.get('id'))
 async def generate():
-    id = request.args.get('id', '1')
-    if id in banned_ids:
-        return 'sorry but you are banned lol (or you didnt specify your id, stranger!) what did you even do to get banned bruh??  anyway, do you want some cookies? '
-    prompt = request.args.get('prompt', 'Empty')
-    dns_list = []
-    useragent = request.headers.get('user-agent')
-    novparams = []
-    if prompt == 'Empty':
-        return jsonify({'error': "You don't have the following parameter: prompt"}), 400
-    else:
-        if prompt is None:
-            return jsonify({'error': "The following parameter is empty: prompt"}), 400
-            if id is None:
-                id = '1'
-                # Lol this is the weirdest one I have ever done and also different from other endpoints
-    try:
-        resp = await AsyncClient.create_generation("prodia", prompt)
-        img = Image.open(BytesIO(resp))
-    except Exception as e:
-        print('/generate: endpoint crashed. err: {e}')
-        return f"we are very very very very very sowwy about this 😰😰😰😰😰 but our serwwers are not wurking 👉👈 maybe try again???? report to owner with this error: {e}"
-        #stop it 😭😭😭
-    # Try to get the visitor IP address from the X-Forwarded-For header
-    visitor_ip = request.headers.get("X-Forwarded-For")
-    # If the header is None, try to get the visitor IP address from the True-Client-IP header
-    if visitor_ip is None:
-        visitor_ip = request.headers.get("True-Client-IP")
-    # If the header is None, use the remote_addr attribute instead
-    if visitor_ip is None:
-        visitor_ip = request.remote_addr
-        # 😰😳
-    ip_list = visitor_ip.split(",")
-    for ip in ip_list:
-        try:
-            dns = socket.gethostbyaddr(ip)[0]
-        except socket.herror:
-            dns = "No DNS found"
-        except socket.gaierror:
-            dns = "No DNS found"
-            dns_list.append(dns)
-            dns = ",".join(dns_list)
-            # Stop.. I warned you!
-# Print the visitor IP to console
-print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
-# Generate a random string for the filename
-filename = f"{uuid.uuid1()}-DELETEDAFTER5MINS.png"
-# Ensure the static folder exists
-os.makedirs('static', exist_ok=True)
-# Save the image to the static folder
-filepath = os.path.join('static', filename)
-img.save(filepath)
-# Schedule the deletion of the image file after 5 minutes
-executor.submit(delete_image, filepath, delay=300)
-# Redirect the user to the URL of the saved image
-return redirect(url_for('static', filename=filename))
-run(generate())
+   id = request.args.get('id', '1')
+   if id in banned_ids:
+       return 'sorry but you are banned lol (or you didnt specify your id, stranger!) what did you even do to get banned? anyway, do you want some cookies? '
+   prompt = request.args.get('prompt', 'Empty')
+   dns_list = []
+   useragent = request.headers.get('user-agent')
+   novparams = []
+   if prompt == 'Empty':
+       return jsonify({'error': "You don't have the following parameter: prompt"}), 400
+   else:
+       if prompt is None:
+           return jsonify({'error': "The following parameter is empty: prompt"}), 400
+           if id is None:
+               id = '1'
+   try:
+       resp = await AsyncClient.create_generation("prodia", prompt)
+       img = Image.open(BytesIO(resp))
+   except Exception as e:
+       print('/generate: endpoint crashed. err: {e}')
+       return f"we are very very very very very sowwy about this 😰😰😰😰😰 but our serwwers are not wurking 👉👈 maybe try again???? report to owner with this error: {e}"
+   visitor_ip = request.headers.get("X-Forwarded-For")
+   if visitor_ip is None:
+       visitor_ip = request.headers.get("True-Client-IP")
+   if visitor_ip is None:
+       visitor_ip = request.remote_addr
+   ip_list = visitor_ip.split(",")
+   for ip in ip_list:
+       try:
+           dns = socket.gethostbyaddr(ip)[0]
+       except socket.herror:
+           dns = "No DNS found"
+       except socket.gaierror:
+           dns = "No DNS found"
+       dns_list.append(dns)
+       dns = ",".join(dns_list)
+   print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
+   filename = f"{uuid.uuid1()}-DELETEDAFTER5MINS.png"
+   os.makedirs('static', exist_ok=True)
+   filepath = os.path.join('static', filename)
+   img.save(filepath)
+   executor.submit(delete_image, filepath, delay=300)
+   return redirect(url_for('static', filename=filename))
 
+run(generate())
 
 @app.route('/tts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
