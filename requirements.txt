@@ -1,10 +1,10 @@
-#g4f @ git+https://github.com/xtekky/gpt4free.git
-g4f==0.1.8.7
+g4f @ git+https://github.com/xtekky/gpt4free.git
+#g4f==0.1.8.7
 flask==2.2.5
 waitress
 beautifulsoup4
 autopep8
-bardapi
+bardapi==0.1.30
 async-timeout==4.0.2
 flask-ipban
 requests==2.31.0
