@@ -590,6 +590,7 @@ def tts():
    text = request.args.get('input', 'Empty')
    missing_params = []
    novparams = []
+   dns_list = []
    id = request.args.get('id', 'Empty')
    if text == "Empty":
        missing_params.append("input")
