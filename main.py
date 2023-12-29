@@ -586,7 +586,7 @@ async def generate():
 
 @app.route('/tts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
-def tts():
+async def tts():
    text = request.args.get('input', 'Empty')
    missing_params = []
    novparams = []
@@ -633,6 +633,7 @@ def tts():
            f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
            executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
            return redirect(url_for('static', filename=filename))
+           run(tts())
 
 def delete_file(file_path, delete_time):
    while time.time() < delete_time:
