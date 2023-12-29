@@ -19,7 +19,7 @@ from pymongo import MongoClient
 import ipaddress
 from bs4 import BeautifulSoup
 import urllib.parse
-from bardapi import Bard
+from bardapi import BardAsync
 import datetime
 import time
 import os
@@ -100,7 +100,7 @@ blocked_user_agents = os.getenv('UAGENT').split(',')
 
 # Load necessary things for Bard (TTS)
 bardtoken = os.getenv('BARDCOOKIE')
-bard = Bard(token=bardtoken)
+bard = BardAsync(token=bardtoken)
 
 executor = Executor(app)
 
@@ -623,7 +623,7 @@ def tts():
    dns_list.append(dns)
    dns = ",".join(dns_list)
    print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
-   audio = bard.speech(text)
+   audio = run(bard.speech(text))
    directory = 'static'
    if not os.path.exists(directory):
        os.makedirs(directory)
