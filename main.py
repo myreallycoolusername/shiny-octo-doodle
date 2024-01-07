@@ -631,7 +631,7 @@ def tts():
    dns_list.append(dns)
    dns = ",".join(dns_list)
    print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
-   audio = await bard.speech(text)
+   audio = bard.speech(text)
    directory = 'static'
    if not os.path.exists(directory):
        os.makedirs(directory)
