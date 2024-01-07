@@ -19,7 +19,7 @@ from pymongo import MongoClient
 import ipaddress
 from bs4 import BeautifulSoup
 import urllib.parse
-from bardapi import BardAsync
+from bardapi import Bard
 import datetime
 import time
 import os
@@ -100,7 +100,7 @@ blocked_user_agents = os.getenv('UAGENT').split(',')
 
 # Load necessary things for Bard (TTS)
 bardtoken = os.getenv('BARDCOOKIE')
-bard = BardAsync(token=bardtoken)
+bard = Bard(token=bardtoken)
 
 executor = Executor(app)
 
@@ -129,11 +129,19 @@ limiter = Limiter(
     default_limits=["30/minute", "1/second"],
     strategy="fixed-window"
 )
-
+# Fix url function
 def fix_url(url):
     if not urllib.parse.urlparse(url).scheme:
         url = "https://" + url
     return url
+
+# Delete a file function
+def delete_file(file_path, delete_time):
+    while time.time() < delete_time:
+        time.sleep(1)
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
 
 # Define rate limit function
 def check_rate_limit(id):
@@ -579,14 +587,14 @@ async def generate():
    os.makedirs('static', exist_ok=True)
    filepath = os.path.join('static', filename)
    img.save(filepath)
-   executor.submit(delete_image, filepath, delay=300)
+   executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
    return redirect(url_for('static', filename=filename))
    run(generate())
 
 
 @app.route('/tts', methods=['GET'])
 @limiter.limit("40 per minute;100000 per day", key_func=lambda: request.args.get('id'))
-async def tts():
+def tts():
    text = request.args.get('input', 'Empty')
    missing_params = []
    novparams = []
@@ -633,13 +641,6 @@ async def tts():
            f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
            executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
            return redirect(url_for('static', filename=filename))
-           run(tts())
-
-def delete_file(file_path, delete_time):
-   while time.time() < delete_time:
-       time.sleep(1)
-       if os.path.exists(file_path):
-           os.remove(file_path)
 
 
 @app.route('/secretimgen', methods=['GET'])
@@ -697,7 +698,7 @@ async def genimgreserved():
     img.save(filepath)
 
     # Schedule the deletion of the image file after 5 minutes
-    executor.submit(delete_image, filepath, delay=300)
+    executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
 
     # Redirect the user to the URL of the saved image
     return redirect(url_for('static', filename=filename))
