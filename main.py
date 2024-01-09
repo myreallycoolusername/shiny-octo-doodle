@@ -98,9 +98,16 @@ g4f.debug.logging = True
 # Get banned user agents
 blocked_user_agents = os.getenv('UAGENT').split(',')
 
+# Proxies for Bard
+proxies = {
+    'https': os.getenv("PROXY4")
+    'https': os.getenv("PROXY5")
+    'https': os.getenv("PROXY6")
+    'https': os.getenv("PROXY7")
+}
 # Load necessary things for Bard (TTS)
 bardtoken = os.getenv('BARDCOOKIE')
-bard = Bard(token=bardtoken)
+bard = Bard(token=bardtoken, proxies=proxies)
 
 executor = Executor(app)
 
