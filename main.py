@@ -100,9 +100,9 @@ blocked_user_agents = os.getenv('UAGENT').split(',')
 
 # Proxies for Bard
 proxies = {
-    'https': os.getenv("PROXY4")
-    'https': os.getenv("PROXY5")
-    'https': os.getenv("PROXY6")
+    'https': os.getenv("PROXY4"),
+    'https': os.getenv("PROXY5"),
+    'https': os.getenv("PROXY6"),
     'https': os.getenv("PROXY7")
 }
 # Load necessary things for Bard (TTS)
