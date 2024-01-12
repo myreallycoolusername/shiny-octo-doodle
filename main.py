@@ -95,6 +95,9 @@ banned_ids = banned_ids.split(',')
 # Enable logging for g4f
 g4f.debug.logging = True
 
+# Disable version check for g4f
+g4f.debug.version_check = False
+
 # Get banned user agents
 blocked_user_agents = os.getenv('UAGENT').split(',')
 
