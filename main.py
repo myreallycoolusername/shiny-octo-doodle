@@ -641,10 +641,9 @@ def tts():
   filename = str(uuid.uuid1()) + ".mp3"
   file_path = os.path.join('static', filename)
   with open(file_path, "wb") as f:
-      #f.write(bytes(audio.get('audio', '')))
-      f.write(bytes(audio['audio']))
+      f.write(bytes(audio.get('audio', ''), encoding='utf-8'))
       executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
-      return redirect(url_for('static', filename=filename))
+      return redirect(url_for('static', filename=filename)), 200
 
 
 @app.route('/secretimgen', methods=['GET'])
