@@ -1,5 +1,4 @@
-#g4f @ git+https://github.com/xtekky/gpt4free.git
-g4f @ git+https://github.com/xcloudx12345/gpt4free.git
+g4f @ git+https://github.com/xtekky/gpt4free.git
 #g4f==0.1.8.7
 flask==2.2.5
 waitress
