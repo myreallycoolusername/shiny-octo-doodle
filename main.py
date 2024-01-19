@@ -101,9 +101,6 @@ g4f.debug.version_check = False
 # Get banned user agents
 blocked_user_agents = os.getenv('UAGENT').split(',')
 
-# Debug bardapi
-print(bardapi.__version__)
-
 # Proxies for Bard
 proxies = {
     'http': os.getenv("PROXY4"),
