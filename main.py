@@ -641,13 +641,13 @@ def tts():
   dns = ",".join(dns_list)
   print(f"Visitor IP on /tts: {visitor_ip} (dns: {dns}). tts prompt: {text}. id: {id}.")
   audio = bard.speech(text)
-  filename = str(uuid.uuid1()) + ".mp3"
+  filename = str(uuid.uuid1()) + ".ogg"
   file_path = os.path.join('static', filename)
   with open(file_path, "wb") as f:
-      f.write(audio.get('audio', ''))
+      f.write(bytes(audio['audio']))
       #f.write(bytes(audio['audio']))
       executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
-      return redirect(url_for('static', filename=filename)), 200
+      return redirect('/static/' + filename)
 
 
 @app.route('/secretimgen', methods=['GET'])
