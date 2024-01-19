@@ -4,7 +4,7 @@ flask==2.2.5
 waitress
 beautifulsoup4
 autopep8
-bardapi @ git+https://github.com/dsdanielpark/Bard-API.git
+bardapi #@ git+https://github.com/dsdanielpark/Bard-API.git
 async-timeout==4.0.2
 flask-ipban
 langdetect
