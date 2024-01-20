@@ -595,7 +595,7 @@ async def generate():
    print(f"Visitor IP on /generate: {visitor_ip} (dns: {dns}), and ID {id}, useragent: {useragent}. prompt: {prompt}")
    filename = f"{uuid.uuid1()}-DELETEDAFTER5MINS.png"
    os.makedirs('static', exist_ok=True)
-   filepath = os.path.join('static', filename)
+   file_path = os.path.join('static', filename)
    img.save(filepath)
    executor.submit_stored('delete_file_' + filename, delete_file, file_path, time.time() + 300)
    return redirect(url_for('static', filename=filename))
