@@ -19,7 +19,7 @@ from pymongo import MongoClient
 import ipaddress
 from bs4 import BeautifulSoup
 import urllib.parse
-from bardapi import Bard
+from bardapi import BardCookies
 import datetime
 import time
 import os
@@ -109,8 +109,11 @@ proxies = {
     'http': os.getenv("PROXY7")
 }
 # Load necessary things for Bard (TTS)
-bardtoken = os.getenv('BARDCOOKIE')
-bard = Bard(token=bardtoken, proxies=proxies)
+cookie_dict = {
+    "__Secure-1PSID": os.getenv("BARDCOOKIE"),
+    "__Secure-1PSIDCC", os.getenv("PSIDCC"),
+}
+bard = BardCookies(cookie_dict=cookie_dict, proxies=proxies)
 
 executor = Executor(app)
 
