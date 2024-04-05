@@ -11,7 +11,7 @@ langdetect
 colorama
 requests==2.31.0
 Flask-Limiter==3.3.1
-pymongo==4.4.1
+pymongo==4.6.3
 js2py @ git+https://github.com/PiotrDabkowski/js2py.git
 freeGPT @ git+https://github.com/Ruu3f/freeGPT.git
 serverless-wsgi==3.0.2
