@@ -9,7 +9,7 @@ async-timeout==4.0.2
 flask-ipban
 langdetect
 colorama
-requests==2.31.0
+requests==2.32.0
 Flask-Limiter==3.3.1
 pymongo==4.4.1
 js2py @ git+https://github.com/PiotrDabkowski/js2py.git
